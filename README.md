@@ -4,9 +4,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 PS: This project was originaly created by [@shah-xad](https://github.com/shah-xad/flutter_background_location) for Android only.
 
-# Getting Started
-
-## How to install
+## Getting Started
 
 **1:** Add this to your package's pubspec.yaml file:
 
@@ -62,17 +60,17 @@ To stop listening to location changes you can execute.
 BackgeoundLocation.stopLocationService();
 ```
 
-# Example
+## Example
 
-### [Complete working application Example](https://github.com/almoullim/background_location/tree/master/example)
+**[Complete working application Example](https://github.com/almoullim/background_location/tree/master/example)**
 
-# Todo
+## Todo
 
 - Add support for manually asking for permission.
 - Add support for checking the permission status.
 - Add support for getting the last location once without listening to location updates.
 
-# Contributers
+## Contributers
 
 - Ali Almoullim ([@almoullim](https://github.com/Almoullim)) -- iOS implementation
 - Shahzad Akram ([@shah-xad](https://github.com/shah-xad)) -- Android implementation
