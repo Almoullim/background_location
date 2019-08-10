@@ -1,6 +1,6 @@
 name: backgeound_location
-description: A new flutter plugin project.
-version: 0.0.1
+description: Flutter background location plugin for Android and iOS
+version: 0.0.4
 author:
 homepage:
 
