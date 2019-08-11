@@ -5,6 +5,7 @@ authors:
   - Ali Almoullim <ali.almoullim@gmail.com>
   - Shahzad Akram <shahxadakram@gmail.com>
 homepage: https://github.com/Almoullim/background_location
+repository: https://github.com/Almoullim/background_location
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
