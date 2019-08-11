@@ -1,8 +1,10 @@
 name: backgeound_location
 description: Flutter background location plugin for Android and iOS
 version: 0.0.4
-author:
-homepage:
+authors:
+  - Ali Almoullim <ali.almoullim@gmail.com>
+  - Shahzad Akram <shahxadakram@gmail.com>
+homepage: https://github.com/Almoullim/background_location
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
