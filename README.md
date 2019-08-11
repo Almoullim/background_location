@@ -1,4 +1,4 @@
-# Backgeound Location
+# Background Location
 
 A Flutter plugin to get location updates in the background for both Android and iOS. Uses `CoreLocation` for iOS and `FusedLocationProvider` for Android
 
@@ -32,13 +32,13 @@ import 'package:background_location/background_location.dart';
 Start the location service. This will also ask the user for permission if not asked previously by another package.
 
 ```dart
-BackgeoundLocation.startLocationService();
+BackgroundLocation.startLocationService();
 ```
 
 `getLocationUpdates` will trigger everytime the location updates on the device. Provide a callback function to `getLocationUpdates` to handle location update.
 
 ```dart
-BackgeoundLocation.getLocationUpdates((location) {
+BackgroundLocation.getLocationUpdates((location) {
   print(location);
 });
 ```
@@ -57,7 +57,7 @@ double speed;
 To stop listening to location changes you can execute.
 
 ```dart
-BackgeoundLocation.stopLocationService();
+BackgroundLocation.stopLocationService();
 ```
 
 ## Example

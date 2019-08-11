@@ -1,4 +1,4 @@
-group 'com.almoullim.backgeound_location'
+group 'com.almoullim.background_location'
 version '1.0-SNAPSHOT'
 
 buildscript {

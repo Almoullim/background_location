@@ -1,4 +1,4 @@
-package com.almoullim.backgeound_location
+package com.almoullim.background_location
 
 import android.app.*
 import android.content.BroadcastReceiver
@@ -10,7 +10,7 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
-import com.almoullim.backgeound_location.Utils
+import com.almoullim.background_location.Utils
 
 
 class LocationUpdatesService : Service() {

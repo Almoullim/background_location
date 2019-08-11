@@ -1,4 +1,4 @@
-package com.almoullim.backgeound_location
+package com.almoullim.background_location
 
 import android.Manifest
 import android.app.Activity
@@ -10,9 +10,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.almoullim.backgeound_location.Utils
-import com.almoullim.backgeound_location.LocationUpdatesService
-import com.almoullim.backgeound_location.R
+import com.almoullim.background_location.Utils
+import com.almoullim.background_location.LocationUpdatesService
+import com.almoullim.background_location.R
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -21,7 +21,7 @@ import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
 
-class BackgeoundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
 
 
     private lateinit var activity: Activity
@@ -34,7 +34,7 @@ class BackgeoundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
         @JvmStatic
         fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "almoullim.com/background_location")
-            channel.setMethodCallHandler(BackgeoundLocationPlugin(registrar.activity(), channel))
+            channel.setMethodCallHandler(BackgroundLocationPlugin(registrar.activity(), channel))
         }
 
         private const val TAG = "com.almoullim.Log.Tag"

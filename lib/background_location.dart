@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 
-class BackgeoundLocation {
+class BackgroundLocation {
   static const MethodChannel _channel =
       const MethodChannel('almoullim.com/background_location');
 

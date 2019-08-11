@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:backgeound_location/backgeound_location.dart';
+import 'package:background_location/background_location.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,8 +20,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    BackgeoundLocation.startLocationService();
-    BackgeoundLocation.getLocationUpdates((location) {
+    BackgroundLocation.startLocationService();
+    BackgroundLocation.getLocationUpdates((location) {
       setState(() {
         this.latitude = location.latitude.toString();
         this.longitude = location.longitude.toString();
@@ -60,12 +60,12 @@ class _MyAppState extends State<MyApp> {
               locationData("Speed: " + speed),
               RaisedButton(
                   onPressed: () {
-                    BackgeoundLocation.startLocationService();
+                    BackgroundLocation.startLocationService();
                   },
                   child: Text("Start Location Service")),
               RaisedButton(
                   onPressed: () {
-                    BackgeoundLocation.stopLocationService();
+                    BackgroundLocation.stopLocationService();
                   },
                   child: Text("Stop Location Service")),
               RaisedButton(
@@ -92,14 +92,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   getCurrentLocation() {
-    BackgeoundLocation().getCurrentLocation().then((location) {
+    BackgroundLocation().getCurrentLocation().then((location) {
       print("This is current Location" + location.longitude.toString());
     });
   }
 
   @override
   void dispose() {
-    BackgeoundLocation.stopLocationService();
+    BackgroundLocation.stopLocationService();
     super.dispose();
   }
 }

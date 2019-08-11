@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almoullim.backgeound_location
+package com.almoullim.background_location
 
 
 import android.content.Context
