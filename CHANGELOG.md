@@ -1,3 +1,7 @@
+## 0.0.5
+
+Fixed spelling mistakes.
+
 ## 0.0.4
 
-Add iOS support.
+Added iOS support.
