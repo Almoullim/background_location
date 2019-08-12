@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:backgeound_location/backgeound_location.dart';
+// import 'package:background_location/background_location.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('backgeound_location');
