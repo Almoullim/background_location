@@ -10,7 +10,7 @@ PS: This project was originaly created by [@shah-xad](https://github.com/shah-xa
 
 ```yaml
 dependencies:
-  background_location: ^0.0.6
+  background_location: ^0.0.7
 ```
 
 **2:** Install packages from the command line:
@@ -27,6 +27,28 @@ Import the package where you wanna use it.
 
 ```dart
 import 'package:background_location/background_location.dart';
+```
+
+Request permissions from the user.
+
+```dart
+BackgroundLocation.getPermissions(
+  onGranted: () {
+    // Start location service here or do something else
+  },
+  onDenied: () {
+    // Show a message asking the user to reconsider or do something else
+  },
+)
+```
+
+You can check if you have permissions at anytime with `checkPermissions()`
+
+```dart
+BackgroundLocation.checkPermissions().then((status) {
+  // Check status here
+})
+
 ```
 
 Start the location service. This will also ask the user for permission if not asked previously by another package.
@@ -66,8 +88,8 @@ BackgroundLocation.stopLocationService();
 
 ## Todo
 
-- [ ] Add support for manually asking for permission.
-- [ ] Add support for checking the permission status.
+- [x] Add support for manually asking for permission.
+- [x] Add support for checking the permission status.
 - [ ] Add support for getting the last location once without listening to location updates.
 - [ ] Add support for chosing the rate at the which the location is fetched based on time and distance.
 
