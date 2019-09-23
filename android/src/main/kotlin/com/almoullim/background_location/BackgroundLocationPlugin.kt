@@ -10,9 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.almoullim.background_location.Utils
-import com.almoullim.background_location.LocationUpdatesService
-import com.almoullim.background_location.R
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler

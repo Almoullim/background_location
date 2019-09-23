@@ -10,7 +10,6 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
-import com.almoullim.background_location.Utils
 
 
 class LocationUpdatesService : Service() {
@@ -29,18 +28,17 @@ class LocationUpdatesService : Service() {
 
     companion object {
 
-        private val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
+        private const val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
-        private val CHANNEL_ID = "channel_01"
-        internal val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
-        internal val EXTRA_LOCATION = "$PACKAGE_NAME.location"
-        private val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
-        private val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 10000
-        private val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
-        private val NOTIFICATION_ID = 12345678
+        private const val CHANNEL_ID = "channel_01"
+        internal const val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
+        internal const val EXTRA_LOCATION = "$PACKAGE_NAME.location"
+        private const val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
+        private const val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 2000
+        private const val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
+        private const val NOTIFICATION_ID = 12345678
         private lateinit var broadcastReceiver: BroadcastReceiver
-
-        private val STOP_SERVICE = "stop_service"
+        private const val STOP_SERVICE = "stop_service"
     }
 
 
@@ -50,20 +48,19 @@ class LocationUpdatesService : Service() {
 
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
 
-            val activityPendingIntent = PendingIntent.getBroadcast(this, 0, Intent(STOP_SERVICE), 0)
+            //val activityPendingIntent = PendingIntent.getBroadcast(this, 0, Intent(STOP_SERVICE), 0)
 
-            val builder = NotificationCompat.Builder(this)
-                    .addAction(R.drawable.abc_cab_background_top_material, "Stop location Service",
-                            activityPendingIntent)
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    //.setContentIntent(activityPendingIntent)
                     .setContentTitle("Background Location Service is Running")
                     .setOngoing(true)
                     .setSound(null)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setSmallIcon(R.drawable.navigation_empty_icon)
+                    //.setSmallIcon(R.drawable.navigation_empty_icon)
                     .setWhen(System.currentTimeMillis())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                builder.setChannelId(CHANNEL_ID)
-            }
+
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                builder.setChannelId(CHANNEL_ID)
+//            }
 
             return builder.build()
         }
@@ -77,9 +74,6 @@ class LocationUpdatesService : Service() {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-
-
-
                 onNewLocation(locationResult!!.lastLocation)
             }
         }
