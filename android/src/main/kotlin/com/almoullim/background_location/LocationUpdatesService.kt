@@ -12,6 +12,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 
 
+
+
 class LocationUpdatesService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -50,12 +52,16 @@ class LocationUpdatesService : Service() {
 
             //val activityPendingIntent = PendingIntent.getBroadcast(this, 0, Intent(STOP_SERVICE), 0)
 
+            val startIntent = packageManager.getLaunchIntentForPackage(application.packageName)
+
+            val activityPendingIntent = PendingIntent.getActivity(this,1000, startIntent,0)
+
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                    //.setContentIntent(activityPendingIntent)
-                    .setContentTitle("Background Location Service is Running")
+                    .setContentIntent(activityPendingIntent)
+                    .setContentTitle(getString(R.string.notification_message))
                     .setOngoing(true)
                     .setSound(null)
-                    //.setSmallIcon(R.drawable.navigation_empty_icon)
+                    .setSmallIcon(R.drawable.navigation_empty_icon)
                     .setWhen(System.currentTimeMillis())
 
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -80,7 +86,6 @@ class LocationUpdatesService : Service() {
         createLocationRequest()
         getLastLocation()
 
-
         val handlerThread = HandlerThread(TAG)
         handlerThread.start()
         mServiceHandler = Handler(handlerThread.looper)
@@ -88,7 +93,7 @@ class LocationUpdatesService : Service() {
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Application Name"
+            val name = getString(R.string.app_name)
             val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
             mChannel.setSound(null, null)
             mNotificationManager!!.createNotificationChannel(mChannel)

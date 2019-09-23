@@ -20,4 +20,6 @@
     <string name="ok">OK</string>
     <string name="request_location_updates">Request location updates</string>
     <string name="remove_location_updates">Remove location updates</string>
+    <string name="app_name">app</string>
+    <string name="notification_message">running</string>
 </resources>
