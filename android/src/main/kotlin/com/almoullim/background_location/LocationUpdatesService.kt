@@ -100,7 +100,7 @@ class LocationUpdatesService : Service() {
             mNotificationManager!!.createNotificationChannel(mChannel)
         }
 
-        startForeground(NOTIFICATION_ID, notification)
+        //startForeground(NOTIFICATION_ID, notification)
 
 
         broadcastReceiver = object : BroadcastReceiver() {
@@ -138,7 +138,7 @@ class LocationUpdatesService : Service() {
             Utils.setRequestingLocationUpdates(this, false)
             mNotificationManager!!.cancel(NOTIFICATION_ID)
             stopSelf()
-            stopForeground(true)
+            //stopForeground(true)
         } catch (unlikely: SecurityException) {
             Utils.setRequestingLocationUpdates(this, true)
         }
