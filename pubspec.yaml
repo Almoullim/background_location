@@ -1,6 +1,6 @@
 name: background_location
 description: A Flutter plugin to get location updates in the background for both Android and iOS. Uses CoreLocation for iOS and FusedLocationProvider for Android.
-version: 0.0.7
+version: 0.0.8
 authors:
   - Ali Almoullim <ali.almoullim@gmail.com>
   - Shahzad Akram <shahxadakram@gmail.com>
