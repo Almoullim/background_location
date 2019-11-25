@@ -1,3 +1,7 @@
+## 0.0.9
+
+Bump up permission_handler from ^3.2.1+ to ^4.0.0
+
 ## 0.0.7
 
 Add `Future getPermissions(onGranted:onDenied:)`
