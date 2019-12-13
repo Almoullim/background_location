@@ -21,7 +21,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
 
 
-    private lateinit var activity: Activity
+    private lateinit var registrar: Registrar
     private lateinit var channel: MethodChannel
     private var myReceiver: MyReceiver? = null
     private var mService: LocationUpdatesService? = null
@@ -31,7 +31,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
         @JvmStatic
         fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "almoullim.com/background_location")
-            channel.setMethodCallHandler(BackgroundLocationPlugin(registrar.activity(), channel))
+            channel.setMethodCallHandler(BackgroundLocationPlugin(registrar, channel))
         }
 
         private const val TAG = "com.almoullim.Log.Tag"
@@ -39,19 +39,19 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
     }
 
 
-    constructor(activity: Activity, channel: MethodChannel) : this() {
-        this.activity = activity
+    constructor(registrar: Registrar, channel: MethodChannel) : this() {
+        this.registrar = registrar
         this.channel = channel
 
 
         myReceiver = MyReceiver()
 
-        if (Utils.requestingLocationUpdates(activity)) {
+        if (Utils.requestingLocationUpdates(registrar.activeContext())) {
             if (!checkPermissions()) {
                 requestPermissions()
             }
         }
-        LocalBroadcastManager.getInstance(activity).registerReceiver(myReceiver!!,
+        LocalBroadcastManager.getInstance(registrar.activeContext()).registerReceiver(myReceiver!!,
                 IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
     }
 
@@ -65,19 +65,19 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
 
                 mService?.removeLocationUpdates()
 
-                LocalBroadcastManager.getInstance(activity).unregisterReceiver(myReceiver!!)
+                LocalBroadcastManager.getInstance(registrar.activeContext()).unregisterReceiver(myReceiver!!)
 
                 if (mBound) {
-                    activity.unbindService(mServiceConnection)
+                    registrar.activeContext().unbindService(mServiceConnection)
                     mBound = false
                 }
 
             }
             call.method == "start_location_service" -> {
-                LocalBroadcastManager.getInstance(activity).registerReceiver(myReceiver!!,
+                LocalBroadcastManager.getInstance(registrar.activeContext()).registerReceiver(myReceiver!!,
                         IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
                 if (!mBound) {
-                    activity.bindService(Intent(activity, LocationUpdatesService::class.java), mServiceConnection, Context.BIND_AUTO_CREATE)
+                    registrar.activeContext().bindService(Intent(registrar.activeContext(), LocationUpdatesService::class.java), mServiceConnection, Context.BIND_AUTO_CREATE)
                 }
 /*
                 if (mService != null) {
@@ -124,7 +124,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
             when {
                 grantResults!!.isEmpty() -> Log.i(TAG, "User interaction was cancelled.")
                 grantResults[0] == PackageManager.PERMISSION_GRANTED -> mService!!.requestLocationUpdates()
-                else -> Toast.makeText(activity, R.string.permission_denied_explanation, Toast.LENGTH_LONG).show()
+                else -> Toast.makeText(registrar.activeContext(), R.string.permission_denied_explanation, Toast.LENGTH_LONG).show()
             }
         }
         return true
@@ -148,21 +148,21 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
     }
 
     private fun checkPermissions(): Boolean {
-        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(activity,
+        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(registrar.activeContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private fun requestPermissions() {
-        val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(activity,
+        val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(registrar.activity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
         if (shouldProvideRationale) {
 
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
-            Toast.makeText(activity, R.string.permission_rationale, Toast.LENGTH_LONG).show()
+            Toast.makeText(registrar.activeContext(), R.string.permission_rationale, Toast.LENGTH_LONG).show()
 
         } else {
             Log.i(TAG, "Requesting permission")
-            ActivityCompat.requestPermissions(activity,
+            ActivityCompat.requestPermissions(registrar.activity(),
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_PERMISSIONS_REQUEST_CODE)
         }

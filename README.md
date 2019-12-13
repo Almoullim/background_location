@@ -10,7 +10,7 @@ PS: This project was originaly created by [@shah-xad](https://github.com/shah-xa
 
 ```yaml
 dependencies:
-  background_location: ^0.0.7
+  background_location: ^0.0.9+1
 ```
 
 **2:** Install packages from the command line:

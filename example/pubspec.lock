@@ -14,7 +14,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.7"
+    version: "0.0.9+1"
   boolean_selector:
     dependency: transitive
     description:
@@ -87,7 +87,7 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.2"
+    version: "4.0.0"
   quiver:
     dependency: transitive
     description:
