@@ -92,6 +92,7 @@ BackgroundLocation.stopLocationService();
 - [x] Add support for checking the permission status.
 - [ ] Add support for getting the last location once without listening to location updates.
 - [ ] Add support for chosing the rate at the which the location is fetched based on time and distance.
+- [ ] Add support for creating a custom Android notification service that keeps background location update interverals consistent.
 
 ## Contributers
 
