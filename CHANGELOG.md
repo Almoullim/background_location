@@ -1,3 +1,7 @@
+## 0.0.9+2
+
+roll back on [22d08f58a2c0b29807ce9f8f20bb7f488fa3acad](https://github.com/Almoullim/background_location/commit/22d08f58a2c0b29807ce9f8f20bb7f488fa3acad) to fix background location service on android
+
 ## 0.0.9
 
 Bump up permission_handler from ^3.2.1+ to ^4.0.0
