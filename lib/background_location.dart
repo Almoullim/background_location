@@ -49,7 +49,6 @@ class BackgroundLocation {
         onGranted();
       }
     } else if (permission == PermissionStatus.denied ||
-        permission == PermissionStatus.disabled ||
         permission == PermissionStatus.restricted ||
         permission == PermissionStatus.unknown) {
       if (onDenied != null) {
