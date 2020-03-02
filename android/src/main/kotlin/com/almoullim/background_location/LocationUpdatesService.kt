@@ -49,10 +49,7 @@ class LocationUpdatesService : Service() {
             val intent = Intent(this, LocationUpdatesService::class.java)
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
             
-            val activityPendingIntent = PendingIntent.getBroadcast(this, 0, Intent(STOP_SERVICE), 0)
             val builder = NotificationCompat.Builder(this)
-                    .addAction(R.drawable.abc_cab_background_top_material, "Stop service",
-                               activityPendingIntent)
                     .setContentTitle("Background service is running")
                     .setOngoing(true)
                     .setSound(null)
