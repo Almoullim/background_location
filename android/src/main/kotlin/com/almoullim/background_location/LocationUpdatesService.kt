@@ -168,7 +168,7 @@ class LocationUpdatesService : Service() {
         mLocationRequest!!.interval = UPDATE_INTERVAL_IN_MILLISECONDS
         mLocationRequest!!.fastestInterval = FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest!!.setMaxWaitTime = UPDATE_INTERVAL_IN_MILLISECONDS * 2
+        mLocationRequest!!.maxWaitTime = UPDATE_INTERVAL_IN_MILLISECONDS * 2
     }
 
 
