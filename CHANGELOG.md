@@ -1,3 +1,7 @@
+## 0.0.10
+
+WIP: Add timestamp from location
+
 ## 0.0.9+3
 
 Bug fixes
