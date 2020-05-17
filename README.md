@@ -74,6 +74,7 @@ double altitude;
 double bearing;
 double accuracy;
 double speed;
+double time;
 ```
 
 To stop listening to location changes you can execute.
