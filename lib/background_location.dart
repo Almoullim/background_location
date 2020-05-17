@@ -32,6 +32,7 @@ class BackgroundLocation {
       _location.altitude = location.altitude;
       _location.bearing = location.bearing;
       _location.speed = location.speed;
+      _location.time = location.time;
       completer.complete(_location);
     });
 
@@ -80,7 +81,7 @@ class BackgroundLocation {
             accuracy: locationData["accuracy"],
             bearing: locationData["bearing"],
             speed: locationData["speed"],
-          ),
+            time: locationData["time"],          ),
         );
       }
     });
@@ -96,7 +97,8 @@ class _Location {
       this.altitude,
       this.accuracy,
       this.bearing,
-      this.speed});
+      this.speed,
+      this.time});
 
   double latitude;
   double longitude;
@@ -104,4 +106,5 @@ class _Location {
   double bearing;
   double accuracy;
   double speed;
+  double time;  
 }

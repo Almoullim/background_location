@@ -145,6 +145,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 locationMap["accuracy"] = location.accuracy.toDouble()
                 locationMap["bearing"] = location.bearing.toDouble()
                 locationMap["speed"] = location.speed.toDouble()
+                locationMap["time"] = location.time.toDouble()
                 channel.invokeMethod("location", locationMap, null)
             }
         }

@@ -46,7 +46,8 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
             "latitude": locations.last!.coordinate.latitude,
             "longitude": locations.last!.coordinate.longitude,
             "accuracy": locations.last!.horizontalAccuracy,
-            "bearing": locations.last!.course
+            "bearing": locations.last!.course,
+            "time": locations.last!.timestamp.timeInvervalSince1970 * 1000
         ] as [String : Any]
 
         SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: location)
