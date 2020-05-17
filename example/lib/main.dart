@@ -15,6 +15,7 @@ class _MyAppState extends State<MyApp> {
   String accuracy = "waiting...";
   String bearing = "waiting...";
   String speed = "waiting...";
+  String time = "waiting...";
 
   @override
   void initState() {
@@ -29,6 +30,8 @@ class _MyAppState extends State<MyApp> {
         this.altitude = location.altitude.toString();
         this.bearing = location.bearing.toString();
         this.speed = location.speed.toString();
+        this.time = DateTime.fromMillisecondsSinceEpoch(location.time.toInt())
+            .toString();
       });
 
       print("""\n
@@ -38,6 +41,7 @@ class _MyAppState extends State<MyApp> {
       Accuracy: $accuracy
       Bearing:  $bearing
       Speed: $speed
+      Time: $time
       """);
     });
   }
@@ -58,6 +62,7 @@ class _MyAppState extends State<MyApp> {
               locationData("Accuracy: " + accuracy),
               locationData("Bearing: " + bearing),
               locationData("Speed: " + speed),
+              locationData("Time: " + time),
               RaisedButton(
                   onPressed: () {
                     BackgroundLocation.startLocationService();
