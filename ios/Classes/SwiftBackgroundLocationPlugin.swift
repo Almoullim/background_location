@@ -20,6 +20,7 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
         SwiftBackgroundLocationPlugin.locationManager?.requestAlwaysAuthorization()
 
         SwiftBackgroundLocationPlugin.locationManager?.allowsBackgroundLocationUpdates = true
+        SwiftBackgroundLocationPlugin.locationManager?.showsBackgroundLocationIndicator = true
         SwiftBackgroundLocationPlugin.locationManager?.pausesLocationUpdatesAutomatically = false
 
         SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: "method")
