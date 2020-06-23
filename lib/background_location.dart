@@ -90,8 +90,8 @@ class BackgroundLocation {
 
 /// An object containing infromation
 /// about the user current location
-class _Location {
-  _Location(
+class Location {
+  Location(
       {this.longitude,
       this.latitude,
       this.altitude,
@@ -106,5 +106,18 @@ class _Location {
   double bearing;
   double accuracy;
   double speed;
-  double time;  
+  double time;
+  
+  toMap() {
+    var obj = {
+      'latitude': this.latitude,
+      'longitude': this.longitude,
+      'altitude': this.altitude,
+      'bearing': this.bearing,
+      'accuracy': this.accuracy,
+      'speed': this.speed,
+      'time': this.time
+    };
+    return obj;
+  } 
 }
