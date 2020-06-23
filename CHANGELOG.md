@@ -1,3 +1,8 @@
+## 0.0.12
+
+- `Location` class is now public and can imported
+- `Location` class now contains a `toMap()` that will return JSON compatible map
+
 ## 0.0.11
 
 Bug fixes
