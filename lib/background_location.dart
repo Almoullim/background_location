@@ -21,10 +21,10 @@ class BackgroundLocation {
   }
 
   /// Get the current location once.
-  Future<_Location> getCurrentLocation() async {
-    Completer<_Location> completer = Completer();
+  Future<Location> getCurrentLocation() async {
+    Completer<Location> completer = Completer();
 
-    _Location _location = _Location();
+    Location _location = Location();
     await getLocationUpdates((location) {
       _location.latitude = location.latitude;
       _location.longitude = location.longitude;
@@ -67,14 +67,14 @@ class BackgroundLocation {
 
   /// Register a function to recive location updates as long as the location
   /// service has started
-  static getLocationUpdates(Function(_Location) location) {
+  static getLocationUpdates(Function(Location) location) {
     // add a handler on the channel to recive updates from the native classes
     _channel.setMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == "location") {
         Map locationData = Map.from(methodCall.arguments);
         // Call the user passed function
         location(
-          _Location(
+          Location(
             latitude: locationData["latitude"],
             longitude: locationData["longitude"],
             altitude: locationData["altitude"],
