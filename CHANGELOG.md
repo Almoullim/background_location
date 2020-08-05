@@ -1,3 +1,8 @@
+## 0.1.2
+
+Added showsBackgroundLocationIndicator to iOS fixing [#29](https://github.com/Almoullim/background_location/issues/30#issuecomment-668540916)
+Update permission handler to v5.0.1+1
+
 ## 0.1.1
 
 Bug fixes
