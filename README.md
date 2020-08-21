@@ -2,15 +2,13 @@
 
 A Flutter plugin to get location updates in the background for both Android and iOS (Requires iOS 10.0+). Uses `CoreLocation` for iOS and `FusedLocationProvider` for Android
 
-PS: This project was originaly created by [@shah-xad](https://github.com/shah-xad/flutter_background_location) for Android only.
-
 ## Getting Started
 
 **1:** Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  background_location: ^0.0.11
+  background_location: ^0.1.2
 ```
 
 **2:** Install packages from the command line:
@@ -93,8 +91,3 @@ BackgroundLocation.stopLocationService();
 - [x] Add support for checking the permission status.
 - [ ] Add support for getting the last location once without listening to location updates.
 - [ ] Add support for chosing the rate at the which the location is fetched based on time and distance.
-
-## Contributers
-
-- Ali Almoullim ([@almoullim](https://github.com/Almoullim)) -- iOS implementation
-- Shahzad Akram ([@shah-xad](https://github.com/shah-xad)) -- Android implementation
