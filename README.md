@@ -8,7 +8,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 ```yaml
 dependencies:
-  background_location: ^0.1.2
+  background_location: ^0.1.3
 ```
 
 **2:** Install packages from the command line:
@@ -79,6 +79,31 @@ To stop listening to location changes you can execute.
 
 ```dart
 BackgroundLocation.stopLocationService();
+```
+
+Make sure to delcare all required permissions for both your android and ios app
+
+info.plist
+```xml
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>This app needs access to location.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>This app needs access to location.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app needs access to location.</string>
+<key>UIBackgroundModes</key>
+<array>
+	<string>fetch</string>
+	<string>location</string>
+</array>
+```
+
+AndroidManifest.xml
+```xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
 ```
 
 ## Example
