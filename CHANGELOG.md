@@ -1,3 +1,7 @@
+## 0.1.3
+Update android plugin permissions
+Update README
+
 ## 0.1.2
 
 Added showsBackgroundLocationIndicator to iOS fixing [#29](https://github.com/Almoullim/background_location/issues/30#issuecomment-668540916)
