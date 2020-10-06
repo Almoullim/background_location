@@ -1,3 +1,6 @@
+## 0.2.0
+Allow changing notification title in Android
+
 ## 0.1.3
 Update android plugin permissions
 Update README

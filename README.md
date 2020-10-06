@@ -8,7 +8,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 ```yaml
 dependencies:
-  background_location: ^0.1.3
+  background_location: ^0.2.0
 ```
 
 **2:** Install packages from the command line:
@@ -37,7 +37,7 @@ BackgroundLocation.getPermissions(
   onDenied: () {
     // Show a message asking the user to reconsider or do something else
   },
-)
+);
 ```
 
 You can check if you have permissions at anytime with `checkPermissions()`
@@ -45,8 +45,14 @@ You can check if you have permissions at anytime with `checkPermissions()`
 ```dart
 BackgroundLocation.checkPermissions().then((status) {
   // Check status here
-})
+});
 
+```
+
+Set the notification title (Android). Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
+
+```dart
+BackgroundLocation.setNotificationTitle("Test Title");
 ```
 
 Start the location service. This will also ask the user for permission if not asked previously by another package.
