@@ -60,14 +60,9 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
 
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-
-
         when {
-
             call.method == "stop_location_service" -> {
-
                 mService?.removeLocationUpdates()
-
                 LocalBroadcastManager.getInstance(registrar.activeContext()).unregisterReceiver(myReceiver!!)
 
                 if (mBound) {
@@ -75,6 +70,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                     mBound = false
                 }
 
+                result.success(0);
             }
             call.method == "start_location_service" -> {
                 LocalBroadcastManager.getInstance(registrar.activeContext()).registerReceiver(myReceiver!!,
@@ -82,15 +78,29 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 if (!mBound) {
                     registrar.activeContext().bindService(Intent(registrar.activeContext(), LocationUpdatesService::class.java), mServiceConnection, Context.BIND_AUTO_CREATE)
                 }
-/*
+
+                result.success(0);
+
+                /*
                 if (mService != null) {
                     requestLocation()
-                }*/
+                }
+                */
+            }
+            call.method == "set_notification_title" -> {
+                val notificationTitle: String? = call.argument("title");
+                if (notificationTitle != null) {
+                    if (mService != null) {
+                        mService?.setNotificationTitle(notificationTitle)
+                    } else {
+                        LocationUpdatesService.NOTIFICATION_TITLE = notificationTitle
+                    }
+                }
+
+                result.success(0);
             }
             else -> result.notImplemented()
         }
-
-
     }
 
 

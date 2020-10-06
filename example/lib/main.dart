@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:background_location/background_location.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,8 +20,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    BackgroundLocation.startLocationService();
     BackgroundLocation.getLocationUpdates((location) {
       setState(() {
         this.latitude = location.latitude.toString();
@@ -64,8 +62,10 @@ class _MyAppState extends State<MyApp> {
               locationData("Speed: " + speed),
               locationData("Time: " + time),
               RaisedButton(
-                  onPressed: () {
-                    BackgroundLocation.startLocationService();
+                  onPressed: () async {
+                    await BackgroundLocation.setNotificationTitle(
+                        "Background service running");
+                    await BackgroundLocation.startLocationService();
                   },
                   child: Text("Start Location Service")),
               RaisedButton(

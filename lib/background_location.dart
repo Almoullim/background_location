@@ -11,13 +11,19 @@ class BackgroundLocation {
       const MethodChannel('almoullim.com/background_location');
 
   /// Stop receiving location updates
-  static stopLocationService() {
-    _channel.invokeMapMethod("stop_location_service");
+  static stopLocationService() async {
+    return await _channel.invokeMethod("stop_location_service");
   }
 
   /// Start receiving location updated
-  static startLocationService() {
-    _channel.invokeMapMethod("start_location_service");
+  static startLocationService() async {
+    return await _channel.invokeMethod("start_location_service");
+  }
+
+  static setNotificationTitle(String title) async {
+    return await _channel.invokeMethod("set_notification_title", <String, dynamic>{
+      "title": title
+    });
   }
 
   /// Get the current location once.
