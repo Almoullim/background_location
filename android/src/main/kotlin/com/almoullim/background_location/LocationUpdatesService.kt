@@ -26,8 +26,8 @@ class LocationUpdatesService : Service() {
     private var mLocationCallback: LocationCallback? = null
     private var mLocation: Location? = null
 
-
     companion object {
+        var NOTIFICATION_TITLE = "Background service is running"
 
         private val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
@@ -44,23 +44,24 @@ class LocationUpdatesService : Service() {
     }
 
 
-    private val notification: Notification
+    private val notification: NotificationCompat.Builder
         get() {
             val intent = Intent(this, LocationUpdatesService::class.java)
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
             
             val builder = NotificationCompat.Builder(this)
-                    .setContentTitle("Background service is running")
+                    .setContentTitle(NOTIFICATION_TITLE)
                     .setOngoing(true)
                     .setSound(null)
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setSmallIcon(R.drawable.navigation_empty_icon)
                     .setWhen(System.currentTimeMillis())
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder.setChannelId(CHANNEL_ID)
             }
 
-            return builder.build()
+            return builder
         }
 
     private var mServiceHandler: Handler? = null
@@ -72,20 +73,16 @@ class LocationUpdatesService : Service() {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-
-
-
                 onNewLocation(locationResult!!.lastLocation)
             }
         }
+
         createLocationRequest()
         getLastLocation()
-
 
         val handlerThread = HandlerThread(TAG)
         handlerThread.start()
         mServiceHandler = Handler(handlerThread.looper)
-
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -95,24 +92,19 @@ class LocationUpdatesService : Service() {
             mNotificationManager!!.createNotificationChannel(mChannel)
         }
 
-        startForeground(NOTIFICATION_ID, notification)
-
+        startForeground(NOTIFICATION_ID, notification.build())
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-
                 if (intent?.action == "stop_service") {
                     removeLocationUpdates()
                 }
-
             }
         }
-
 
         val filter = IntentFilter()
         filter.addAction(STOP_SERVICE)
         registerReceiver(broadcastReceiver, filter)
-
     }
 
 
@@ -126,6 +118,10 @@ class LocationUpdatesService : Service() {
         }
     }
 
+    fun setNotificationTitle(title: String) {
+        NOTIFICATION_TITLE = title
+        notification.setContentTitle(title)
+    }
 
     fun removeLocationUpdates() {
         try {
@@ -137,7 +133,6 @@ class LocationUpdatesService : Service() {
         } catch (unlikely: SecurityException) {
             Utils.setRequestingLocationUpdates(this, true)
         }
-
     }
 
 
@@ -181,7 +176,6 @@ class LocationUpdatesService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
-
     }
 
 }

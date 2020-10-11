@@ -11,20 +11,26 @@ class BackgroundLocation {
       const MethodChannel('almoullim.com/background_location');
 
   /// Stop receiving location updates
-  static stopLocationService() {
-    _channel.invokeMapMethod("stop_location_service");
+  static stopLocationService() async {
+    return await _channel.invokeMethod("stop_location_service");
   }
 
   /// Start receiving location updated
-  static startLocationService() {
-    _channel.invokeMapMethod("start_location_service");
+  static startLocationService() async {
+    return await _channel.invokeMethod("start_location_service");
+  }
+
+  static setNotificationTitle(String title) async {
+    return await _channel.invokeMethod("set_notification_title", <String, dynamic>{
+      "title": title
+    });
   }
 
   /// Get the current location once.
-  Future<_Location> getCurrentLocation() async {
-    Completer<_Location> completer = Completer();
+  Future<Location> getCurrentLocation() async {
+    Completer<Location> completer = Completer();
 
-    _Location _location = _Location();
+    Location _location = Location();
     await getLocationUpdates((location) {
       _location.latitude = location.latitude;
       _location.longitude = location.longitude;
@@ -41,17 +47,15 @@ class BackgroundLocation {
 
   /// Ask the user for location permissions
   static getPermissions({Function onGranted, Function onDenied}) async {
-    await PermissionHandler()
-        .requestPermissions([PermissionGroup.locationAlways]);
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.locationAlways);
-    if (permission == PermissionStatus.granted) {
+    await Permission.locationWhenInUse.request();
+    if (await Permission.locationWhenInUse.isGranted) {
       if (onGranted != null) {
         onGranted();
       }
-    } else if (permission == PermissionStatus.denied ||
-        permission == PermissionStatus.restricted ||
-        permission == PermissionStatus.unknown) {
+    } else if (await Permission.locationWhenInUse.isDenied ||
+        await Permission.locationWhenInUse.isPermanentlyDenied ||
+        await Permission.locationWhenInUse.isRestricted ||
+        await Permission.locationWhenInUse.isUndetermined) {
       if (onDenied != null) {
         onDenied();
       }
@@ -60,21 +64,20 @@ class BackgroundLocation {
 
   /// Check what the current permissions status is
   static Future<PermissionStatus> checkPermissions() async {
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.locationAlways);
+    PermissionStatus permission = await Permission.locationWhenInUse.status;
     return permission;
   }
 
   /// Register a function to recive location updates as long as the location
   /// service has started
-  static getLocationUpdates(Function(_Location) location) {
+  static getLocationUpdates(Function(Location) location) {
     // add a handler on the channel to recive updates from the native classes
     _channel.setMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == "location") {
         Map locationData = Map.from(methodCall.arguments);
         // Call the user passed function
         location(
-          _Location(
+          Location(
             latitude: locationData["latitude"],
             longitude: locationData["longitude"],
             altitude: locationData["altitude"],
@@ -90,8 +93,8 @@ class BackgroundLocation {
 
 /// An object containing infromation
 /// about the user current location
-class _Location {
-  _Location(
+class Location {
+  Location(
       {this.longitude,
       this.latitude,
       this.altitude,
@@ -106,5 +109,18 @@ class _Location {
   double bearing;
   double accuracy;
   double speed;
-  double time;  
+  double time;
+  
+  toMap() {
+    var obj = {
+      'latitude': this.latitude,
+      'longitude': this.longitude,
+      'altitude': this.altitude,
+      'bearing': this.bearing,
+      'accuracy': this.accuracy,
+      'speed': this.speed,
+      'time': this.time
+    };
+    return obj;
+  } 
 }
