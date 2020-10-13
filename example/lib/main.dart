@@ -20,28 +20,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    BackgroundLocation.getLocationUpdates((location) {
-      setState(() {
-        this.latitude = location.latitude.toString();
-        this.longitude = location.longitude.toString();
-        this.accuracy = location.accuracy.toString();
-        this.altitude = location.altitude.toString();
-        this.bearing = location.bearing.toString();
-        this.speed = location.speed.toString();
-        this.time = DateTime.fromMillisecondsSinceEpoch(location.time.toInt())
-            .toString();
-      });
-
-      print("""\n
-      Latitude:  $latitude
-      Longitude: $longitude
-      Altitude: $altitude
-      Accuracy: $accuracy
-      Bearing:  $bearing
-      Speed: $speed
-      Time: $time
-      """);
-    });
   }
 
   @override
@@ -66,6 +44,28 @@ class _MyAppState extends State<MyApp> {
                     await BackgroundLocation.setNotificationTitle(
                         "Background service running");
                     await BackgroundLocation.startLocationService();
+                    BackgroundLocation.getLocationUpdates((location) {
+                      setState(() {
+                        this.latitude = location.latitude.toString();
+                        this.longitude = location.longitude.toString();
+                        this.accuracy = location.accuracy.toString();
+                        this.altitude = location.altitude.toString();
+                        this.bearing = location.bearing.toString();
+                        this.speed = location.speed.toString();
+                        this.time = DateTime.fromMillisecondsSinceEpoch(
+                                location.time.toInt())
+                            .toString();
+                      });
+                      print("""\n
+                        Latitude:  $latitude
+                        Longitude: $longitude
+                        Altitude: $altitude
+                        Accuracy: $accuracy
+                        Bearing:  $bearing
+                        Speed: $speed
+                        Time: $time
+                      """);
+                    });
                   },
                   child: Text("Start Location Service")),
               RaisedButton(
