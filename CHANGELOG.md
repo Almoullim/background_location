@@ -1,3 +1,6 @@
+## 0.2.1
+Include swift version in podspec to avoid errors when the users don't
+
 ## 0.2.0
 Allow changing notification title in Android
 
