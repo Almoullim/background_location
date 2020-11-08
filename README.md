@@ -49,7 +49,7 @@ BackgroundLocation.checkPermissions().then((status) {
 
 ```
 
-Set the notification title **(Only call this method in Android)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
+Set the notification title **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
 
 ```dart
 BackgroundLocation.setNotificationTitle("Test Title");
