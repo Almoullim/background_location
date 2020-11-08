@@ -22,7 +22,7 @@ class BackgroundLocation {
   }
 
   static setNotificationTitle(String title) async {
-    var result
+    var result;
     
     if (Platform.isAndroid) {
       result = await _channel.invokeMethod("set_notification_title", <String, dynamic>{
@@ -30,7 +30,7 @@ class BackgroundLocation {
       });
     }
     
-     return result
+     return result;
   }
 
   /// Get the current location once.
