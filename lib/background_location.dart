@@ -22,13 +22,15 @@ class BackgroundLocation {
   }
 
   static setNotificationTitle(String title) async {
+    var result
+    
     if (Platform.isAndroid) {
-      return await _channel.invokeMethod("set_notification_title", <String, dynamic>{
+      result = await _channel.invokeMethod("set_notification_title", <String, dynamic>{
         "title": title
       });
-    } else {
-      return Promise.resolve(); 
     }
+    
+     return result
   }
 
   /// Get the current location once.
