@@ -1,3 +1,6 @@
+## 0.2.2
+prevent setNotificationTitle form running in ios
+
 ## 0.2.1
 Include swift version in podspec to avoid errors when the users don't
 
