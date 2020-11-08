@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:io' show Platform;
 
 /// BackgroundLocation plugin to get background
 /// lcoation updates in iOS and Android
@@ -21,9 +22,13 @@ class BackgroundLocation {
   }
 
   static setNotificationTitle(String title) async {
-    return await _channel.invokeMethod("set_notification_title", <String, dynamic>{
-      "title": title
-    });
+    if (Platform.isAndroid) {
+      return await _channel.invokeMethod("set_notification_title", <String, dynamic>{
+        "title": title
+      });
+    } else {
+      return Promise.resolve(); 
+    }
   }
 
   /// Get the current location once.
