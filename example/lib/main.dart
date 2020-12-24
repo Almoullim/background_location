@@ -41,8 +41,12 @@ class _MyAppState extends State<MyApp> {
               locationData("Time: " + time),
               RaisedButton(
                   onPressed: () async {
-                    await BackgroundLocation.setNotificationTitle(
-                        "Background service running");
+                    await BackgroundLocation.setAndroidNotification(
+                        title: "Background service is running",
+                        message: "Background location in progress",
+                        icon: "@mipmap/ic_launcher",
+                    );
+                    await BackgroundLocation.setAndroidConfiguration(1000);
                     await BackgroundLocation.startLocationService();
                     BackgroundLocation.getLocationUpdates((location) {
                       setState(() {
