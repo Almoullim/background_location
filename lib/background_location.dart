@@ -21,17 +21,28 @@ class BackgroundLocation {
     return await _channel.invokeMethod("start_location_service");
   }
 
-  static setNotificationTitle(String title) async {
-    var result;
-    
+  static setAndroidNotification({String title, String message, String icon}) async {
     if (Platform.isAndroid) {
-      result = await _channel.invokeMethod("set_notification_title", <String, dynamic>{
-        "title": title
+      return await _channel.invokeMethod("set_android_notification", <String, dynamic>{
+        "title": title,
+        "message": message,
+        "icon": icon
       });
+    } else {
+      //return Promise.resolve();
     }
-    
-     return result;
   }
+
+  static setAndroidConfiguration({int interval}) async {
+    if (Platform.isAndroid) {
+      return await _channel.invokeMethod("set_configuration", <String, dynamic>{
+        "interval": interval.toString(),
+      });
+    } else {
+      //return Promise.resolve();
+    }
+  }
+
 
   /// Get the current location once.
   Future<Location> getCurrentLocation() async {
