@@ -1,3 +1,6 @@
+## 0.3.0
+Allow updating android notification (title, message and icon) and update time interval between localisation. [#61](https://github.com/Almoullim/background_location/pull/61)
+
 ## 0.2.2
 prevent setNotificationTitle form running in ios
 
