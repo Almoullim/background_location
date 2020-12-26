@@ -81,21 +81,25 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
 
                 result.success(0);
 
-                /*
-                if (mService != null) {
-                    requestLocation()
-                }
-                */
             }
-            call.method == "set_notification_title" -> {
+            call.method == "set_android_notification" -> {
                 val notificationTitle: String? = call.argument("title");
-                if (notificationTitle != null) {
-                    if (mService != null) {
-                        mService?.setNotificationTitle(notificationTitle)
-                    } else {
-                        LocationUpdatesService.NOTIFICATION_TITLE = notificationTitle
-                    }
+                val notificationMessage: String? = call.argument("message");
+                val notificationIcon: String? = call.argument("icon");
+
+                if (notificationTitle != null) LocationUpdatesService.NOTIFICATION_TITLE = notificationTitle
+                if (notificationMessage != null) LocationUpdatesService.NOTIFICATION_MESSAGE = notificationMessage
+                if (notificationIcon != null) LocationUpdatesService.NOTIFICATION_ICON = notificationIcon
+
+                if (mService != null) {
+                    mService?.updateNotification()
                 }
+
+                result.success(0);
+            }
+            call.method == "set_configuration" -> {
+                val timeInterval: Long? = call.argument("interval");
+                if (timeInterval != null) LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
 
                 result.success(0);
             }

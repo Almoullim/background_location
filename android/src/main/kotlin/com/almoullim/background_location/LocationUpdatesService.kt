@@ -10,7 +10,6 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
-import com.almoullim.background_location.Utils
 
 
 class LocationUpdatesService : Service() {
@@ -28,6 +27,8 @@ class LocationUpdatesService : Service() {
 
     companion object {
         var NOTIFICATION_TITLE = "Background service is running"
+        var NOTIFICATION_MESSAGE = "Background service is running"
+        var NOTIFICATION_ICON ="@mipmap/ic_launcher"
 
         private val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
@@ -35,7 +36,7 @@ class LocationUpdatesService : Service() {
         internal val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
         internal val EXTRA_LOCATION = "$PACKAGE_NAME.location"
         private val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
-        private val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 2000
+        var UPDATE_INTERVAL_IN_MILLISECONDS: Long = 1000
         private val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
         private val NOTIFICATION_ID = 12345678
         private lateinit var broadcastReceiver: BroadcastReceiver
@@ -46,16 +47,22 @@ class LocationUpdatesService : Service() {
 
     private val notification: NotificationCompat.Builder
         get() {
-            val intent = Intent(this, LocationUpdatesService::class.java)
+
+            val intent = Intent(this, getMainActivityClass(this))
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
-            
-            val builder = NotificationCompat.Builder(this)
+            intent.action = "Localisation"
+            //intent.setClass(this, getMainActivityClass(this))
+            val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val builder = NotificationCompat.Builder(this, "BackgroundLocation")
                     .setContentTitle(NOTIFICATION_TITLE)
                     .setOngoing(true)
                     .setSound(null)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setSmallIcon(R.drawable.navigation_empty_icon)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setSmallIcon(resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName))
                     .setWhen(System.currentTimeMillis())
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
+                    .setContentIntent(pendingIntent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder.setChannelId(CHANNEL_ID)
@@ -118,9 +125,11 @@ class LocationUpdatesService : Service() {
         }
     }
 
-    fun setNotificationTitle(title: String) {
-        NOTIFICATION_TITLE = title
-        notification.setContentTitle(title)
+    fun updateNotification() {
+        //NOTIFICATION_TITLE = title
+        //notification.setContentTitle(title)
+        var notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 
     fun removeLocationUpdates() {
@@ -178,4 +187,16 @@ class LocationUpdatesService : Service() {
         unregisterReceiver(broadcastReceiver)
     }
 
+    private fun getMainActivityClass(context: Context): Class<*>? {
+        val packageName = context.packageName
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+        val className = launchIntent?.component?.className ?: return null
+
+        return try {
+            Class.forName(className)
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
