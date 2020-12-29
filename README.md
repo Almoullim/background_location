@@ -49,10 +49,20 @@ BackgroundLocation.checkPermissions().then((status) {
 
 ```
 
-Set the notification title **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
+Set the notification title, message and icon **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
 
 ```dart
-BackgroundLocation.setNotificationTitle("Test Title");
+BackgroundLocation.setAndroidNotification(
+	title: "Notification title",
+        message: "Notification message",
+        icon: "@mipmap/ic_launcher",
+);
+```
+
+Set the interval between localisations in milliseconds **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
+
+```dart
+BackgroundLocation.setAndroidConfiguration(1000);
 ```
 
 Start the location service. This will also ask the user for permission if not asked previously by another package.
