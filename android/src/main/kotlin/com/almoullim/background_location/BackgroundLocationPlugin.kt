@@ -98,7 +98,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 result.success(0);
             }
             call.method == "set_configuration" -> {
-                val timeInterval: Long? = call.argument("interval");
+                val timeInterval: Long? = call.argument<String>("interval")?.toLongOrNull();
                 if (timeInterval != null) LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
 
                 result.success(0);
