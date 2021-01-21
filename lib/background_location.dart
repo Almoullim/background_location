@@ -33,7 +33,7 @@ class BackgroundLocation {
     }
   }
 
-  static setAndroidConfiguration({int interval}) async {
+  static setAndroidConfiguration(int interval) async {
     if (Platform.isAndroid) {
       return await _channel.invokeMethod("set_configuration", <String, dynamic>{
         "interval": interval.toString(),
