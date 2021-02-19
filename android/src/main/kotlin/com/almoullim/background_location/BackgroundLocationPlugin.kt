@@ -155,7 +155,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
         override fun onReceive(context: Context, intent: Intent) {
             val location = intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
-                val locationMap = HashMap<String, Double>()
+                val locationMap = HashMap<String, Any>()
                 locationMap["latitude"] = location.latitude
                 locationMap["longitude"] = location.longitude
                 locationMap["altitude"] = location.altitude
@@ -163,6 +163,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 locationMap["bearing"] = location.bearing.toDouble()
                 locationMap["speed"] = location.speed.toDouble()
                 locationMap["time"] = location.time.toDouble()
+                locationMap["is_mock"] = location.isFromMockProvider
                 channel.invokeMethod("location", locationMap, null)
             }
         }

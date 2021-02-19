@@ -104,7 +104,9 @@ class BackgroundLocation {
             accuracy: locationData["accuracy"],
             bearing: locationData["bearing"],
             speed: locationData["speed"],
-            time: locationData["time"],          ),
+            time: locationData["time"],
+            isMock: locationData["is_mock"]
+          ),
         );
       }
     });
@@ -121,7 +123,8 @@ class Location {
       this.accuracy,
       this.bearing,
       this.speed,
-      this.time});
+      this.time,
+      this.isMock});
 
   double latitude;
   double longitude;
@@ -130,6 +133,7 @@ class Location {
   double accuracy;
   double speed;
   double time;
+  bool isMock;
   
   toMap() {
     var obj = {
@@ -139,7 +143,8 @@ class Location {
       'bearing': this.bearing,
       'accuracy': this.accuracy,
       'speed': this.speed,
-      'time': this.time
+      'time': this.time,
+      'is_mock': this.isMock
     };
     return obj;
   } 
