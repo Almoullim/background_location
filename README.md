@@ -71,7 +71,7 @@ Start the location service. This will also ask the user for permission if not as
 BackgroundLocation.startLocationService();
 ```
 
-Start location service by specifying `distanceFilter`. Defaults to `0` of not specified
+Start location service by specifying `distanceFilter`. Defaults to `0` if not specified
 
 ```dart
 BackgroundLocation.startLocationService(distanceFilter : 10);
