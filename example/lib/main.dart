@@ -46,8 +46,8 @@ class _MyAppState extends State<MyApp> {
                         message: "Background location in progress",
                         icon: "@mipmap/ic_launcher",
                     );
-                    await BackgroundLocation.setAndroidConfiguration(1000);
-                    await BackgroundLocation.startLocationService();
+                    //await BackgroundLocation.setAndroidConfiguration(1000);
+                    await BackgroundLocation.startLocationService(distanceFilter: 20);
                     BackgroundLocation.getLocationUpdates((location) {
                       setState(() {
                         this.latitude = location.latitude.toString();
@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
 
   getCurrentLocation() {
     BackgroundLocation().getCurrentLocation().then((location) {
-      print("This is current Location" + location.longitude.toString());
+      print("This is current Location " + location.toMap().toString());
     });
   }
 

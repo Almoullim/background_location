@@ -76,7 +76,10 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 LocalBroadcastManager.getInstance(registrar.activeContext()).registerReceiver(myReceiver!!,
                         IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
                 if (!mBound) {
-                    registrar.activeContext().bindService(Intent(registrar.activeContext(), LocationUpdatesService::class.java), mServiceConnection, Context.BIND_AUTO_CREATE)
+                    val distanceFilter : Double? = call.argument("distance_filter")
+                    val intent = Intent(registrar.activeContext(), LocationUpdatesService::class.java);
+                    intent.putExtra("distance_filter", distanceFilter)
+                    registrar.activeContext().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
                 }
 
                 result.success(0);

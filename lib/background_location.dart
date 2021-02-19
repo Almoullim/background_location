@@ -17,8 +17,10 @@ class BackgroundLocation {
   }
 
   /// Start receiving location updated
-  static startLocationService() async {
-    return await _channel.invokeMethod("start_location_service");
+  static startLocationService({double distanceFilter = 0.0}) async {
+    return await _channel.invokeMethod("start_location_service", <String, dynamic>{
+      "distance_filter": distanceFilter
+    });
   }
 
   static setAndroidNotification({String title, String message, String icon}) async {

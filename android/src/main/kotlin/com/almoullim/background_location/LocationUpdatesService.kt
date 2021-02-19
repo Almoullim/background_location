@@ -15,6 +15,12 @@ import com.google.android.gms.location.*
 class LocationUpdatesService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
+        val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
+        if (distanceFilter != null) {
+            createLocationRequest(distanceFilter)
+        }else {
+            createLocationRequest(0.0)
+        }
         return mBinder
     }
 
@@ -84,7 +90,6 @@ class LocationUpdatesService : Service() {
             }
         }
 
-        createLocationRequest()
         getLastLocation()
 
         val handlerThread = HandlerThread(TAG)
@@ -167,12 +172,12 @@ class LocationUpdatesService : Service() {
     }
 
 
-    private fun createLocationRequest() {
+    private fun createLocationRequest(distanceFilter: Double) {
         mLocationRequest = LocationRequest()
         mLocationRequest!!.interval = UPDATE_INTERVAL_IN_MILLISECONDS
         mLocationRequest!!.fastestInterval = FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest!!.maxWaitTime = UPDATE_INTERVAL_IN_MILLISECONDS * 2
+        mLocationRequest!!.smallestDisplacement = distanceFilter.toFloat()
     }
 
 
