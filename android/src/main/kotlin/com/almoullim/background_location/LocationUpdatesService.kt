@@ -138,15 +138,8 @@ class LocationUpdatesService : Service() {
     }
 
     fun removeLocationUpdates() {
-        try {
-            mFusedLocationClient!!.removeLocationUpdates(mLocationCallback!!)
-            Utils.setRequestingLocationUpdates(this, false)
-            mNotificationManager!!.cancel(NOTIFICATION_ID)
-            stopSelf()
-            stopForeground(true)
-        } catch (unlikely: SecurityException) {
-            Utils.setRequestingLocationUpdates(this, true)
-        }
+        stopForeground(true)
+        stopSelf()
     }
 
 
@@ -190,6 +183,13 @@ class LocationUpdatesService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
+        try {
+            mFusedLocationClient!!.removeLocationUpdates(mLocationCallback!!)
+            Utils.setRequestingLocationUpdates(this, false)
+            mNotificationManager!!.cancel(NOTIFICATION_ID)
+        } catch (unlikely: SecurityException) {
+            Utils.setRequestingLocationUpdates(this, true)
+        }
     }
 
     private fun getMainActivityClass(context: Context): Class<*>? {
