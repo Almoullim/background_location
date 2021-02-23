@@ -76,7 +76,10 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 LocalBroadcastManager.getInstance(registrar.activeContext()).registerReceiver(myReceiver!!,
                         IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
                 if (!mBound) {
-                    registrar.activeContext().bindService(Intent(registrar.activeContext(), LocationUpdatesService::class.java), mServiceConnection, Context.BIND_AUTO_CREATE)
+                    val distanceFilter : Double? = call.argument("distance_filter")
+                    val intent = Intent(registrar.activeContext(), LocationUpdatesService::class.java);
+                    intent.putExtra("distance_filter", distanceFilter)
+                    registrar.activeContext().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
                 }
 
                 result.success(0);
@@ -152,7 +155,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
         override fun onReceive(context: Context, intent: Intent) {
             val location = intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
-                val locationMap = HashMap<String, Double>()
+                val locationMap = HashMap<String, Any>()
                 locationMap["latitude"] = location.latitude
                 locationMap["longitude"] = location.longitude
                 locationMap["altitude"] = location.altitude
@@ -160,6 +163,7 @@ class BackgroundLocationPlugin() : MethodCallHandler, PluginRegistry.RequestPerm
                 locationMap["bearing"] = location.bearing.toDouble()
                 locationMap["speed"] = location.speed.toDouble()
                 locationMap["time"] = location.time.toDouble()
+                locationMap["is_mock"] = location.isFromMockProvider
                 channel.invokeMethod("location", locationMap, null)
             }
         }

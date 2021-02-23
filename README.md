@@ -71,6 +71,12 @@ Start the location service. This will also ask the user for permission if not as
 BackgroundLocation.startLocationService();
 ```
 
+Start location service by specifying `distanceFilter`. Defaults to `0` if not specified
+
+```dart
+BackgroundLocation.startLocationService(distanceFilter : 10);
+```
+
 `getLocationUpdates` will trigger everytime the location updates on the device. Provide a callback function to `getLocationUpdates` to handle location update.
 
 ```dart
@@ -89,6 +95,7 @@ double bearing;
 double accuracy;
 double speed;
 double time;
+bool isMock;
 ```
 
 To stop listening to location changes you can execute.
