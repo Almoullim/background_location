@@ -1,3 +1,6 @@
+### 0.4.0
+Added support for choosing the rate at the which the location is fetched based on distance. [#74](https://github.com/Almoullim/background_location/pull/74)
+
 ### 0.3.1
 Bug fixes
 
