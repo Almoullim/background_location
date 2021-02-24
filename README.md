@@ -137,5 +137,4 @@ AndroidManifest.xml
 
 - [x] Add support for manually asking for permission.
 - [x] Add support for checking the permission status.
-- [ ] Add support for getting the last location once without listening to location updates.
-- [ ] Add support for chosing the rate at the which the location is fetched based on time and distance.
+- [x] Add support for chosing the rate at the which the location is fetched based on time and distance.
