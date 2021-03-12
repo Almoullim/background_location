@@ -74,8 +74,7 @@ class BackgroundLocation {
       }
     } else if (await Permission.locationWhenInUse.isDenied ||
         await Permission.locationWhenInUse.isPermanentlyDenied ||
-        await Permission.locationWhenInUse.isRestricted ||
-        await Permission.locationWhenInUse.isUndetermined) {
+        await Permission.locationWhenInUse.isRestricted ) {
       if (onDenied != null) {
         onDenied();
       }
