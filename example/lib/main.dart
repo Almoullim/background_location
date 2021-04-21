@@ -9,13 +9,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String latitude = "waiting...";
-  String longitude = "waiting...";
-  String altitude = "waiting...";
-  String accuracy = "waiting...";
-  String bearing = "waiting...";
-  String speed = "waiting...";
-  String time = "waiting...";
+  String latitude = 'waiting...';
+  String longitude = 'waiting...';
+  String altitude = 'waiting...';
+  String accuracy = 'waiting...';
+  String bearing = 'waiting...';
+  String speed = 'waiting...';
+  String time = 'waiting...';
 
   @override
   void initState() {
@@ -32,35 +32,36 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ListView(
             children: <Widget>[
-              locationData("Latitude: " + latitude),
-              locationData("Longitude: " + longitude),
-              locationData("Altitude: " + altitude),
-              locationData("Accuracy: " + accuracy),
-              locationData("Bearing: " + bearing),
-              locationData("Speed: " + speed),
-              locationData("Time: " + time),
-              RaisedButton(
+              locationData('Latitude: ' + latitude),
+              locationData('Longitude: ' + longitude),
+              locationData('Altitude: ' + altitude),
+              locationData('Accuracy: ' + accuracy),
+              locationData('Bearing: ' + bearing),
+              locationData('Speed: ' + speed),
+              locationData('Time: ' + time),
+              ElevatedButton(
                   onPressed: () async {
                     await BackgroundLocation.setAndroidNotification(
-                        title: "Background service is running",
-                        message: "Background location in progress",
-                        icon: "@mipmap/ic_launcher",
+                      title: 'Background service is running',
+                      message: 'Background location in progress',
+                      icon: '@mipmap/ic_launcher',
                     );
                     //await BackgroundLocation.setAndroidConfiguration(1000);
-                    await BackgroundLocation.startLocationService(distanceFilter: 20);
+                    await BackgroundLocation.startLocationService(
+                        distanceFilter: 20);
                     BackgroundLocation.getLocationUpdates((location) {
                       setState(() {
-                        this.latitude = location.latitude.toString();
-                        this.longitude = location.longitude.toString();
-                        this.accuracy = location.accuracy.toString();
-                        this.altitude = location.altitude.toString();
-                        this.bearing = location.bearing.toString();
-                        this.speed = location.speed.toString();
-                        this.time = DateTime.fromMillisecondsSinceEpoch(
-                                location.time.toInt())
+                        latitude = location.latitude.toString();
+                        longitude = location.longitude.toString();
+                        accuracy = location.accuracy.toString();
+                        altitude = location.altitude.toString();
+                        bearing = location.bearing.toString();
+                        speed = location.speed.toString();
+                        time = DateTime.fromMillisecondsSinceEpoch(
+                                location.time!.toInt())
                             .toString();
                       });
-                      print("""\n
+                      print('''\n
                         Latitude:  $latitude
                         Longitude: $longitude
                         Altitude: $altitude
@@ -68,20 +69,20 @@ class _MyAppState extends State<MyApp> {
                         Bearing:  $bearing
                         Speed: $speed
                         Time: $time
-                      """);
+                      ''');
                     });
                   },
-                  child: Text("Start Location Service")),
-              RaisedButton(
+                  child: Text('Start Location Service')),
+              ElevatedButton(
                   onPressed: () {
                     BackgroundLocation.stopLocationService();
                   },
-                  child: Text("Stop Location Service")),
-              RaisedButton(
+                  child: Text('Stop Location Service')),
+              ElevatedButton(
                   onPressed: () {
                     getCurrentLocation();
                   },
-                  child: Text("Get Current Location")),
+                  child: Text('Get Current Location')),
             ],
           ),
         ),
@@ -100,9 +101,9 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  getCurrentLocation() {
+  void getCurrentLocation() {
     BackgroundLocation().getCurrentLocation().then((location) {
-      print("This is current Location " + location.toMap().toString());
+      print('This is current Location ' + location.toMap().toString());
     });
   }
 
