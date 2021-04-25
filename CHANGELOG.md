@@ -1,3 +1,6 @@
+### 0.5.0
+Added support for Null safety
+
 ### 0.4.1
 Bug fixes
 
