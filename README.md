@@ -8,7 +8,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 ```yaml
 dependencies:
-  background_location: ^0.3.0
+  background_location: ^0.5.0
 ```
 
 **2:** Install packages from the command line:
@@ -137,5 +137,4 @@ AndroidManifest.xml
 
 - [x] Add support for manually asking for permission.
 - [x] Add support for checking the permission status.
-- [ ] Add support for getting the last location once without listening to location updates.
-- [ ] Add support for chosing the rate at the which the location is fetched based on time and distance.
+- [x] Add support for chosing the rate at the which the location is fetched based on time and distance.

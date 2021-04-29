@@ -2,21 +2,27 @@ PODS:
   - background_location (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - "permission_handler (5.1.0+2)":
+    - Flutter
 
 DEPENDENCIES:
   - background_location (from `.symlinks/plugins/background_location/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
 
 EXTERNAL SOURCES:
   background_location:
     :path: ".symlinks/plugins/background_location/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
 
 SPEC CHECKSUMS:
-  background_location: 8a868cfe57bc4a4cd7d1bda902397e48dfeab6a5
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  background_location: 1b80c1fe3abd9912bca298618f6e365abf6f588f
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
 
-PODFILE CHECKSUM: b6a0a141693093b304368d08511b46cf3d1d0ac5
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.10.1
