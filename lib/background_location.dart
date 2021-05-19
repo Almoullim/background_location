@@ -3,7 +3,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// BackgroundLocation plugin to get background
 /// lcoation updates in iOS and Android
@@ -63,28 +62,7 @@ class BackgroundLocation {
     return completer.future;
   }
 
-  /// Ask the user for location permissions
-  // ignore: always_declare_return_types
-  static getPermissions({Function? onGranted, Function? onDenied}) async {
-    await Permission.locationWhenInUse.request();
-    if (await Permission.locationWhenInUse.isGranted) {
-      if (onGranted != null) {
-        onGranted();
-      }
-    } else if (await Permission.locationWhenInUse.isDenied ||
-        await Permission.locationWhenInUse.isPermanentlyDenied ||
-        await Permission.locationWhenInUse.isRestricted) {
-      if (onDenied != null) {
-        onDenied();
-      }
-    }
-  }
 
-  /// Check what the current permissions status is
-  static Future<PermissionStatus> checkPermissions() async {
-    var permission = await Permission.locationWhenInUse.status;
-    return permission;
-  }
 
   /// Register a function to recive location updates as long as the location
   /// service has started
