@@ -27,27 +27,7 @@ Import the package where you wanna use it.
 import 'package:background_location/background_location.dart';
 ```
 
-Request permissions from the user.
-
-```dart
-BackgroundLocation.getPermissions(
-  onGranted: () {
-    // Start location service here or do something else
-  },
-  onDenied: () {
-    // Show a message asking the user to reconsider or do something else
-  },
-);
-```
-
-You can check if you have permissions at anytime with `checkPermissions()`
-
-```dart
-BackgroundLocation.checkPermissions().then((status) {
-  // Check status here
-});
-
-```
+Request permissions from the user. You can use [permission_handler](https://pub.dev/packages/permission_handler) for this
 
 Set the notification title, message and icon **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after becuase its an asynchronous method
 
@@ -128,13 +108,6 @@ AndroidManifest.xml
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
 ```
-
-## Example
-
-**[Complete working application Example](https://github.com/almoullim/background_location/tree/master/example)**
-
-## Todo
-
-- [x] Add support for manually asking for permission.
-- [x] Add support for checking the permission status.
-- [x] Add support for chosing the rate at the which the location is fetched based on time and distance.
+<!-- TODO: Fix example -->
+<!-- ## Example -->
+<!-- **[Complete working application Example](https://github.com/almoullim/background_location/tree/master/example)** -->
