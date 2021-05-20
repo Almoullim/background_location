@@ -1,3 +1,6 @@
+### 0.6.0
+Removed ACCESS_BACKGROUND_LOCATION permission and permission_handler plugin
+
 ### 0.5.0
 Added support for Null safety
 
