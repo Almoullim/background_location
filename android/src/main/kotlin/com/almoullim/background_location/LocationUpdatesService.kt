@@ -18,7 +18,7 @@ class LocationUpdatesService : Service() {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
-        }else {
+        } else {
             createLocationRequest(0.0)
         }
         return mBinder
@@ -35,7 +35,7 @@ class LocationUpdatesService : Service() {
     companion object {
         var NOTIFICATION_TITLE = "Background service is running"
         var NOTIFICATION_MESSAGE = "Background service is running"
-        var NOTIFICATION_ICON ="@mipmap/ic_launcher"
+        var NOTIFICATION_ICON = "@mipmap/ic_launcher"
 
         private val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
@@ -130,14 +130,13 @@ class LocationUpdatesService : Service() {
     }
 
     fun updateNotification() {
-        if !isStarted {
+        if (!isStarted) {
             isStarted = true
             startForeground(NOTIFICATION_ID, notification.build())
-            return
+        } else {
+            var notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(NOTIFICATION_ID, notification.build())
         }
-
-        var notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 
     fun removeLocationUpdates() {
