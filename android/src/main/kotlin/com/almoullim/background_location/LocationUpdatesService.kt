@@ -30,6 +30,7 @@ class LocationUpdatesService : Service() {
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mLocationCallback: LocationCallback? = null
     private var mLocation: Location? = null
+    private var isStarted: Boolean = false
 
     companion object {
         var NOTIFICATION_TITLE = "Background service is running"
@@ -104,8 +105,6 @@ class LocationUpdatesService : Service() {
             mNotificationManager!!.createNotificationChannel(mChannel)
         }
 
-        startForeground(NOTIFICATION_ID, notification.build())
-
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == "stop_service") {
@@ -131,8 +130,12 @@ class LocationUpdatesService : Service() {
     }
 
     fun updateNotification() {
-        //NOTIFICATION_TITLE = title
-        //notification.setContentTitle(title)
+        if !isStarted {
+            isStarted = true
+            startForeground(NOTIFICATION_ID, notification.build())
+            return
+        }
+
         var notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
@@ -182,6 +185,7 @@ class LocationUpdatesService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isStarted = false
         unregisterReceiver(broadcastReceiver)
         try {
             mFusedLocationClient!!.removeLocationUpdates(mLocationCallback!!)
