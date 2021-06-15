@@ -1,3 +1,6 @@
+### 0.6.1
+Only starts showing notification on Android after setAndroidNotification
+
 ### 0.6.0
 Removed ACCESS_BACKGROUND_LOCATION permission and permission_handler plugin
 
