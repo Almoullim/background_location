@@ -97,7 +97,7 @@ class LocationUpdatesService : Service() {
         isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
         
 
-        if (isGoogleApiAvailable && !forceAndroidLocationManager) {
+        if (isGoogleApiAvailable && !this.forceLocationManager) {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             
             mFusedLocationCallback = object : LocationCallback() {
@@ -150,7 +150,7 @@ class LocationUpdatesService : Service() {
     fun requestLocationUpdates() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
-            if (isGoogleApiAvailable && !forceAndroidLocationManager) {
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
                 mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
                     mFusedLocationCallback!!, Looper.myLooper())
             } else {
@@ -179,7 +179,7 @@ class LocationUpdatesService : Service() {
 
     private fun getLastLocation() {
         try {
-            if(isGoogleApiAvailable && !forceAndroidLocationManager) {
+            if(isGoogleApiAvailable && !this.forceLocationManager) {
                 mFusedLocationClient!!.lastLocation
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful && task.result != null) {
@@ -223,7 +223,7 @@ class LocationUpdatesService : Service() {
         isStarted = false
         unregisterReceiver(broadcastReceiver)
         try {
-            if (isGoogleApiAvailable && !forceAndroidLocationManager) {
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
                 mFusedLocationClient!!.removeLocationUpdates(mFusedLocationCallback!!)
             } else {
                 mLocationManager!!.removeUpdates(mLocationManagerCallback!!)
