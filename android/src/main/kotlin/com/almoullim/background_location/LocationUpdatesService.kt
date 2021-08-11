@@ -16,8 +16,11 @@ import com.google.android.gms.common.*
 
 class LocationUpdatesService : Service() {
 
-    override fun onBind(intent: Intent?): IBinder {
+    private val forceLocationManager: Boolean? = false;
+
+    override fun onBind(intent: Intent?): IBinder? {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
+        forceLocationManager = intent?.getBooleanExtra("location_manager", false)
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
         } else {
@@ -88,13 +91,11 @@ class LocationUpdatesService : Service() {
     override fun onCreate() {
         var googleAPIAvailability = GoogleApiAvailability.getInstance()
             .isGooglePlayServicesAvailable(getApplicationContext())
-        if (googleAPIAvailability != ConnectionResult.SUCCESS) {
-            isGoogleApiAvailable = false
-        } else {
-            isGoogleApiAvailable = true
-        }
+        
+        isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
+        
 
-        if (isGoogleApiAvailable) {
+        if (isGoogleApiAvailable && !forceAndroidLocationManager) {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             
             mFusedLocationCallback = object : LocationCallback() {
@@ -147,7 +148,7 @@ class LocationUpdatesService : Service() {
     fun requestLocationUpdates() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
-            if (isGoogleApiAvailable) {
+            if (isGoogleApiAvailable && !forceAndroidLocationManager) {
                 mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
                     mFusedLocationCallback!!, Looper.myLooper())
             } else {
@@ -176,7 +177,7 @@ class LocationUpdatesService : Service() {
 
     private fun getLastLocation() {
         try {
-            if(isGoogleApiAvailable) {
+            if(isGoogleApiAvailable && !forceAndroidLocationManager) {
                 mFusedLocationClient!!.lastLocation
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful && task.result != null) {
@@ -220,7 +221,7 @@ class LocationUpdatesService : Service() {
         isStarted = false
         unregisterReceiver(broadcastReceiver)
         try {
-            if (isGoogleApiAvailable) {
+            if (isGoogleApiAvailable && !forceAndroidLocationManager) {
                 mFusedLocationClient!!.removeLocationUpdates(mFusedLocationCallback!!)
             } else {
                 mLocationManager!!.removeUpdates(mLocationManagerCallback!!)
