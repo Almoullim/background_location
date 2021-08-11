@@ -20,7 +20,7 @@ class LocationUpdatesService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
-        forceLocationManager = intent?.getBooleanExtra("location_manager", false)
+        forceLocationManager = intent?.getBooleanExtra("force_location_manager", false)
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
         } else {

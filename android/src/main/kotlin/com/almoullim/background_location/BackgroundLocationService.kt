@@ -109,7 +109,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
             val distanceFilter : Double? = call.argument("distance_filter")
             val forceLocationManager : Boolean? = call.argument("forceAndroidLocationManager")
             intent.putExtra("distance_filter", distanceFilter)
-            intent.putExtra("location_manager", forceLocationManager)
+            intent.putExtra("force_location_manager", forceLocationManager)
             context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
 
