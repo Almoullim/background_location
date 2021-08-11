@@ -16,11 +16,13 @@ import com.google.android.gms.common.*
 
 class LocationUpdatesService : Service() {
 
-    private val forceLocationManager: Boolean? = false;
+    private var forceLocationManager: Boolean = false;
 
     override fun onBind(intent: Intent?): IBinder? {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
-        forceLocationManager = intent?.getBooleanExtra("force_location_manager", false)
+        if (intent != null) {
+            forceLocationManager = intent.getBooleanExtra("force_location_manager", false)
+        }
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
         } else {
