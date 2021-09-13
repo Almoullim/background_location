@@ -1,4 +1,4 @@
-package com.example.backgeound_location_example
+package com.example.background_location_example
 
 import android.os.Bundle
 
