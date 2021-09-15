@@ -18,25 +18,20 @@ package com.almoullim.background_location
 
 
 import android.content.Context
-import android.location.Location
-import android.preference.PreferenceManager
-
-import java.text.DateFormat
-import java.util.Date
 
 internal object Utils {
 
-    const val KEY_REQUESTING_LOCATION_UPDATES = "requesting_location_updates"
+    private const val KEY_REQUESTING_LOCATION_UPDATES = "requesting_location_updates"
+    private const val SHARED_PREFERENCES_FILE = "${BackgroundLocationPlugin.PLUGIN_ID}_preferences"
 
 
     fun requestingLocationUpdates(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(KEY_REQUESTING_LOCATION_UPDATES, false)
+        return context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE).getBoolean(KEY_REQUESTING_LOCATION_UPDATES, false)
     }
 
 
     fun setRequestingLocationUpdates(context: Context, requestingLocationUpdates: Boolean) {
-        PreferenceManager.getDefaultSharedPreferences(context)
+        context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(KEY_REQUESTING_LOCATION_UPDATES, requestingLocationUpdates)
                 .apply()
