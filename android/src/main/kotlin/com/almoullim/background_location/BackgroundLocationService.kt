@@ -42,7 +42,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler {
      * Context that is set once attached to a FlutterEngine.
      * Context should no longer be referenced when detached.
      */
-    private lateinit var context: Context
+    private var context: Context? = null
     private var channel: MethodChannel? = null
     private var activity: Activity? = null
     private var isAttached = false
@@ -63,6 +63,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler {
     }
 
     fun onDetachedFromEngine() {
+        context = null
         isAttached = false
     }
 
@@ -70,7 +71,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler {
         this.activity = binding?.activity
 
         if(this.activity != null){
-            if (Utils.requestingLocationUpdates(context)) {
+            if (Utils.requestingLocationUpdates(context!!)) {
                 if (!checkPermissions()) {
                     requestPermissions()
                 }
@@ -82,23 +83,23 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler {
         when (call.method) {
             "stop_location_service" -> {
                 service?.removeLocationUpdates()
-                LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver!!)
+                LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
 
                 if (bound) {
-                    context.unbindService(mServiceConnection)
+                    context!!.unbindService(mServiceConnection)
                     bound = false
                 }
 
                 result.success(0)
             }
             "start_location_service" -> {
-                LocalBroadcastManager.getInstance(context).registerReceiver(receiver!!,
+                LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
                         IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
                 if (!bound) {
                     val distanceFilter : Double? = call.argument("distance_filter")
                     val intent = Intent(context, LocationUpdatesService::class.java)
                     intent.putExtra("distance_filter", distanceFilter)
-                    context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                    context!!.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
                 }
 
                 result.success(0)
@@ -158,7 +159,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler {
      * Checks the current permission for `ACCESS_FINE_LOCATION`
      */
     private fun checkPermissions(): Boolean {
-        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
 
