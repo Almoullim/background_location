@@ -2,7 +2,6 @@ package com.example.background_location_example
 
 import io.flutter.embedding.android.FlutterActivity
 import android.os.Bundle
-import com.almoullim.background_location.BackgroundLocationPlugin
 import io.flutter.plugins.GeneratedPluginRegistrant
 
 
