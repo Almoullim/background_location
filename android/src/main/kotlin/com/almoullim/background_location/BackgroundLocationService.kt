@@ -201,7 +201,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                 locationMap["speed"] = location.speed.toDouble()
                 locationMap["time"] = location.time.toDouble()
                 locationMap["is_mock"] = location.isFromMockProvider
-                channel?.invokeMethod("location", locationMap, null)
+                channel.invokeMethod("location", locationMap, null)
             }
         }
     }
