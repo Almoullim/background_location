@@ -37,6 +37,7 @@ class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
         fun registerWith(registrar: PluginRegistry.Registrar) {
             val service = BackgroundLocationService.getInstance()
             service.onAttachedToEngine(registrar.context(), registrar.messenger())
+            registrar.addRequestPermissionsResultListener(service)
         }
 
         const val TAG = "com.almoullim.Log.Tag"
@@ -53,15 +54,17 @@ class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        BackgroundLocationService.getInstance().setActivity(binding)
+        val service = BackgroundLocationService.getInstance()
+        service.setActivity(binding)
+        binding.addRequestPermissionsResultListener(service)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        TODO("Not yet implemented")
+        this.onDetachedFromActivity()
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        TODO("Not yet implemented")
+        this.onAttachedToActivity(binding)
     }
 
     override fun onDetachedFromActivity() {
