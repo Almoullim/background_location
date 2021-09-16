@@ -11,18 +11,18 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+
     <application
+        android:allowBackup="false"
         android:label="background_location_example"
         android:icon="@mipmap/ic_launcher">
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
+            android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
@@ -40,5 +40,10 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
         </activity>
+
+        <service android:name="com.almoullim.background_location.LocationUpdatesService" android:foregroundServiceType="location" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
     </application>
 </manifest>

@@ -50,7 +50,24 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     private var isAttached = false
     private var receiver: MyReceiver? = null
     private var service: LocationUpdatesService? = null
+
+    /**
+     * Signals whether the LocationUpdatesService is bound
+     */
     private var bound: Boolean = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            bound = true
+            val binder = service as LocationUpdatesService.LocalBinder
+            this@BackgroundLocationService.service = binder.service
+            requestLocation()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            service = null
+        }
+    }
 
     fun onAttachedToEngine(@NonNull context: Context, @NonNull messenger: BinaryMessenger) {
         this.context = context
@@ -79,70 +96,60 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                     requestPermissions()
                 }
             }
+        } else {
+            stopLocationService()
         }
+    }
+
+    private fun startLocationService(distanceFilter: Double?): Int{
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
+                IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
+        if (!bound) {
+            val intent = Intent(context, LocationUpdatesService::class.java)
+            intent.putExtra("distance_filter", distanceFilter)
+            context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+
+        return 0
+    }
+
+    private fun stopLocationService(): Int {
+        service?.removeLocationUpdates()
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
+
+        if (bound) {
+            context!!.unbindService(serviceConnection)
+            bound = false
+        }
+
+        return 0
+    }
+
+    private fun setAndroidNotification(title: String?, message: String?, icon: String?):Int{
+        if (title != null) LocationUpdatesService.NOTIFICATION_TITLE = title
+        if (message != null) LocationUpdatesService.NOTIFICATION_MESSAGE = message
+        if (icon != null) LocationUpdatesService.NOTIFICATION_ICON = icon
+
+        if (service != null) {
+            service?.updateNotification()
+        }
+
+        return 0
+    }
+
+    private fun setConfiguration(timeInterval: Long?):Int {
+        if (timeInterval != null) LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
+
+        return 0
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
-            "stop_location_service" -> {
-                service?.removeLocationUpdates()
-                LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
-
-                if (bound) {
-                    context!!.unbindService(mServiceConnection)
-                    bound = false
-                }
-
-                result.success(0)
-            }
-            "start_location_service" -> {
-                LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
-                        IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
-                if (!bound) {
-                    val distanceFilter : Double? = call.argument("distance_filter")
-                    val intent = Intent(context, LocationUpdatesService::class.java)
-                    intent.putExtra("distance_filter", distanceFilter)
-                    context!!.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-                }
-
-                result.success(0)
-
-            }
-            "set_android_notification" -> {
-                val notificationTitle: String? = call.argument("title")
-                val notificationMessage: String? = call.argument("message")
-                val notificationIcon: String? = call.argument("icon")
-
-                if (notificationTitle != null) LocationUpdatesService.NOTIFICATION_TITLE = notificationTitle
-                if (notificationMessage != null) LocationUpdatesService.NOTIFICATION_MESSAGE = notificationMessage
-                if (notificationIcon != null) LocationUpdatesService.NOTIFICATION_ICON = notificationIcon
-
-                if (service != null) {
-                    service?.updateNotification()
-                }
-
-                result.success(0)
-            }
-            "set_configuration" -> {
-                val timeInterval: Long? = call.argument<String>("interval")?.toLongOrNull()
-                if (timeInterval != null) LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
-
-                result.success(0)
-            }
+            "stop_location_service" -> result.success(stopLocationService())
+            "start_location_service" -> result.success(startLocationService(call.argument("distance_filter")))
+            "set_android_notification" -> result.success(setAndroidNotification(call.argument("title"),call.argument("message"),call.argument("icon")))
+            "set_configuration" -> result.success(setConfiguration(call.argument<String>("interval")?.toLongOrNull()))
             else -> result.notImplemented()
-        }
-    }
-
-    private val mServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            bound = true
-            val binder = service as LocationUpdatesService.LocalBinder
-            this@BackgroundLocationService.service = binder.service
-            requestLocation()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            service = null
         }
     }
 

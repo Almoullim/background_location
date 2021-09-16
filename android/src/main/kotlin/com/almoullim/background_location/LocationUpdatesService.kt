@@ -14,7 +14,7 @@ import com.google.android.gms.location.*
 
 class LocationUpdatesService : Service() {
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
@@ -116,6 +116,8 @@ class LocationUpdatesService : Service() {
         val filter = IntentFilter()
         filter.addAction(STOP_SERVICE)
         registerReceiver(broadcastReceiver, filter)
+
+        updateNotification() // to start the foreground service
     }
 
 
@@ -134,7 +136,7 @@ class LocationUpdatesService : Service() {
             isStarted = true
             startForeground(NOTIFICATION_ID, notification.build())
         } else {
-            var notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(NOTIFICATION_ID, notification.build())
         }
     }
@@ -151,7 +153,6 @@ class LocationUpdatesService : Service() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful && task.result != null) {
                             mLocation = task.result
-                        } else {
                         }
                     }
         } catch (unlikely: SecurityException) {
