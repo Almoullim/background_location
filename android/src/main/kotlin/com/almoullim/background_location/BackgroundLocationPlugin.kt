@@ -40,7 +40,7 @@ class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
         }
 
         const val TAG = "com.almoullim.Log.Tag"
-        const val PLUGIN_ID = "com.almoullim/background_location"
+        const val PLUGIN_ID = "com.almoullim.background_location"
     }
 
 
