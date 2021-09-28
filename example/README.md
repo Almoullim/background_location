@@ -1,3 +1,3 @@
-# backgeound_location_example
+# background_location_example
 
-Demonstrates how to use the backgeound_location plugin.
+Demonstrates how to use the background_location plugin.

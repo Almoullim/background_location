@@ -1,5 +1,5 @@
 name: background_location_example
-description: Demonstrates how to use the backgeound_location plugin.
+description: Demonstrates how to use the background_location plugin.
 publish_to: "none"
 
 environment:

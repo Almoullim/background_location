@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 // import 'package:background_location/background_location.dart';
 
 void main() {
-  const channel = MethodChannel('backgeound_location');
+  const channel = MethodChannel('background_location');
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
