@@ -1,3 +1,6 @@
+### 0.7.0
+Implement android embedding v2 [#118](https://github.com/Almoullim/background_location/pull/118)
+
 ### 0.6.1
 Only starts showing notification on Android after setAndroidNotification
 
