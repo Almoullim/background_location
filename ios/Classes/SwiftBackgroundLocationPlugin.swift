@@ -9,7 +9,7 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
     public static func register(with registrar: FlutterPluginRegistrar) {
         let instance = SwiftBackgroundLocationPlugin()
         
-        SwiftBackgroundLocationPlugin.channel = FlutterMethodChannel(name: "almoullim.com/background_location", binaryMessenger: registrar.messenger())
+        SwiftBackgroundLocationPlugin.channel = FlutterMethodChannel(name: "com.almoullim.background_location/methods", binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: SwiftBackgroundLocationPlugin.channel!)
         SwiftBackgroundLocationPlugin.channel?.setMethodCallHandler(instance.handle)
     }
