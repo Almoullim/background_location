@@ -1,5 +1,6 @@
 package com.almoullim.background_location
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.location.*
 import android.location.LocationListener
@@ -63,13 +64,19 @@ class LocationUpdatesService : Service() {
 
 
     private val notification: NotificationCompat.Builder
+        @SuppressLint("UnspecifiedImmutableFlag")
         get() {
 
             val intent = Intent(this, getMainActivityClass(this))
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
             intent.action = "Localisation"
             //intent.setClass(this, getMainActivityClass(this))
-            val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            } else {
+                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+
 
             val builder = NotificationCompat.Builder(this, "BackgroundLocation")
                     .setContentTitle(NOTIFICATION_TITLE)
