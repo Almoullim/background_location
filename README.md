@@ -57,6 +57,12 @@ Start location service by specifying `distanceFilter`. Defaults to `0` if not sp
 BackgroundLocation.startLocationService(distanceFilter : 10);
 ```
 
+You can also force the use of Android `LocationManager` instead of Google's `FusedLocationProvider` by setting the `forceAndroidLocationManager` property to `true`. If not specified, this defaults to `false`, which uses `FusedLocationProvider` if it is available, treating `LocationManager` as a fallback. This setting has no effect on iOS devices.
+
+```dart
+BackgroundLocation.startLocationService(forceAndroidLocationManager: true);
+```
+
 `getLocationUpdates` will trigger everytime the location updates on the device. Provide a callback function to `getLocationUpdates` to handle location update.
 
 ```dart

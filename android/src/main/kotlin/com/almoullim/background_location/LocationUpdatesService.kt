@@ -1,21 +1,28 @@
 package com.almoullim.background_location
 
 import android.app.*
+import android.location.*
+import android.location.LocationListener
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.location.Location
 import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
+import com.google.android.gms.common.*
 
 
 class LocationUpdatesService : Service() {
 
-    override fun onBind(intent: Intent?): IBinder {
+    private var forceLocationManager: Boolean = false;
+
+    override fun onBind(intent: Intent?): IBinder? {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
+        if (intent != null) {
+            forceLocationManager = intent.getBooleanExtra("force_location_manager", false)
+        }
         if (distanceFilter != null) {
             createLocationRequest(distanceFilter)
         } else {
@@ -28,8 +35,11 @@ class LocationUpdatesService : Service() {
     private var mNotificationManager: NotificationManager? = null
     private var mLocationRequest: LocationRequest? = null
     private var mFusedLocationClient: FusedLocationProviderClient? = null
-    private var mLocationCallback: LocationCallback? = null
+    private var mLocationManager: LocationManager? = null
+    private var mFusedLocationCallback: LocationCallback? = null
+    private var mLocationManagerCallback: LocationListener? = null
     private var mLocation: Location? = null
+    private var isGoogleApiAvailable: Boolean = false
     private var isStarted: Boolean = false
 
     companion object {
@@ -81,13 +91,29 @@ class LocationUpdatesService : Service() {
     private var mServiceHandler: Handler? = null
 
     override fun onCreate() {
+        var googleAPIAvailability = GoogleApiAvailability.getInstance()
+            .isGooglePlayServicesAvailable(getApplicationContext())
+        
+        isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
+        
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (isGoogleApiAvailable && !this.forceLocationManager) {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            
+            mFusedLocationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    super.onLocationResult(locationResult)
+                    onNewLocation(locationResult!!.lastLocation)
+                }
+            }
+        } else {
+            mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
-        mLocationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                super.onLocationResult(locationResult)
-                onNewLocation(locationResult!!.lastLocation)
+            mLocationManagerCallback = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    println(location.toString())
+                    onNewLocation(location)
+                }
             }
         }
 
@@ -124,8 +150,12 @@ class LocationUpdatesService : Service() {
     fun requestLocationUpdates() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
-            mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback!!, Looper.myLooper())
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
+                mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
+                    mFusedLocationCallback!!, Looper.myLooper())
+            } else {
+                mLocationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, mLocationManagerCallback!!)
+            }
         } catch (unlikely: SecurityException) {
             Utils.setRequestingLocationUpdates(this, false)
         }
@@ -149,12 +179,17 @@ class LocationUpdatesService : Service() {
 
     private fun getLastLocation() {
         try {
-            mFusedLocationClient!!.lastLocation
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful && task.result != null) {
-                            mLocation = task.result
+            if(isGoogleApiAvailable && !this.forceLocationManager) {
+                mFusedLocationClient!!.lastLocation
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful && task.result != null) {
+                                mLocation = task.result
+                            } else {
+                            }
                         }
-                    }
+            } else {
+                mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
         } catch (unlikely: SecurityException) {
         }
 
@@ -188,7 +223,12 @@ class LocationUpdatesService : Service() {
         isStarted = false
         unregisterReceiver(broadcastReceiver)
         try {
-            mFusedLocationClient!!.removeLocationUpdates(mLocationCallback!!)
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
+                mFusedLocationClient!!.removeLocationUpdates(mFusedLocationCallback!!)
+            } else {
+                mLocationManager!!.removeUpdates(mLocationManagerCallback!!)
+            }
+
             Utils.setRequestingLocationUpdates(this, false)
             mNotificationManager!!.cancel(NOTIFICATION_ID)
         } catch (unlikely: SecurityException) {
