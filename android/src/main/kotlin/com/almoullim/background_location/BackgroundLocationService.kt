@@ -101,13 +101,11 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         }
     }
 
-    private fun startLocationService(distanceFilter: Double?): Int{
+    private fun startLocationService(distanceFilter: Double?, forceLocationManager : Boolean?): Int{
         LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
                 IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
         if (!bound) {
             val intent = Intent(context, LocationUpdatesService::class.java)
-            val distanceFilter : Double? = call.argument("distance_filter")
-            val forceLocationManager : Boolean? = call.argument("forceAndroidLocationManager")
             intent.putExtra("distance_filter", distanceFilter)
             intent.putExtra("force_location_manager", forceLocationManager)
             context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -149,7 +147,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
             "stop_location_service" -> result.success(stopLocationService())
-            "start_location_service" -> result.success(startLocationService(call.argument("distance_filter")))
+            "start_location_service" -> result.success(startLocationService(call.argument("distance_filter"), call.argument("force_location_manager")))
             "set_android_notification" -> result.success(setAndroidNotification(call.argument("title"),call.argument("message"),call.argument("icon")))
             "set_configuration" -> result.success(setConfiguration(call.argument<String>("interval")?.toLongOrNull()))
             else -> result.notImplemented()
