@@ -12,14 +12,14 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.common.*
-
 
 class LocationUpdatesService : Service() {
 
-    private var forceLocationManager: Boolean = false;
+    private var forceLocationManager: Boolean = false
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0)
         if (intent != null) {
             forceLocationManager = intent.getBooleanExtra("force_location_manager", false)
@@ -48,18 +48,18 @@ class LocationUpdatesService : Service() {
         var NOTIFICATION_MESSAGE = "Background service is running"
         var NOTIFICATION_ICON = "@mipmap/ic_launcher"
 
-        private val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
+        private const val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
-        private val CHANNEL_ID = "channel_01"
-        internal val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
-        internal val EXTRA_LOCATION = "$PACKAGE_NAME.location"
-        private val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
+        private const val CHANNEL_ID = "channel_01"
+        internal const val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
+        internal const val EXTRA_LOCATION = "$PACKAGE_NAME.location"
+        private const val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
         var UPDATE_INTERVAL_IN_MILLISECONDS: Long = 1000
         private val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
-        private val NOTIFICATION_ID = 12345678
+        private const val NOTIFICATION_ID = 12345678
         private lateinit var broadcastReceiver: BroadcastReceiver
 
-        private val STOP_SERVICE = "stop_service"
+        private const val STOP_SERVICE = "stop_service"
     }
 
 
@@ -98,8 +98,8 @@ class LocationUpdatesService : Service() {
     private var mServiceHandler: Handler? = null
 
     override fun onCreate() {
-        var googleAPIAvailability = GoogleApiAvailability.getInstance()
-            .isGooglePlayServicesAvailable(getApplicationContext())
+        val googleAPIAvailability = GoogleApiAvailability.getInstance()
+            .isGooglePlayServicesAvailable(applicationContext)
         
         isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
         
@@ -116,11 +116,9 @@ class LocationUpdatesService : Service() {
         } else {
             mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
-            mLocationManagerCallback = object : LocationListener {
-                override fun onLocationChanged(location: Location) {
-                    println(location.toString())
-                    onNewLocation(location)
-                }
+            mLocationManagerCallback = LocationListener { location ->
+                println(location.toString())
+                onNewLocation(location)
             }
         }
 
@@ -191,15 +189,13 @@ class LocationUpdatesService : Service() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful && task.result != null) {
                                 mLocation = task.result
-                            } else {
                             }
                         }
             } else {
-                mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             }
         } catch (unlikely: SecurityException) {
         }
-
     }
 
     private fun onNewLocation(location: Location) {
