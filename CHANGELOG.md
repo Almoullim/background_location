@@ -1,3 +1,6 @@
+### 0.8.1
+Bug Fixes
+
 ### 0.8.0
 Bug Fixes
 
