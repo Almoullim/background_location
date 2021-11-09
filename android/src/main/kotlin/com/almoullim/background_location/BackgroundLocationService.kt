@@ -139,7 +139,10 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     }
 
     private fun setConfiguration(timeInterval: Long?):Int {
-        if (timeInterval != null) LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
+        if (timeInterval != null) {
+            LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
+            LocationUpdatesService.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval/2
+        }
 
         return 0
     }
