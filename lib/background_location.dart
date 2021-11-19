@@ -11,6 +11,8 @@ class BackgroundLocation {
   // This channel is also refrenced inside both iOS and Abdroid classes
   static const MethodChannel _channel =
       MethodChannel('com.almoullim.background_location/methods');
+  static const EventChannel _eventChannel =
+      EventChannel('com.almoullim.background_location/events');
 
   /// Stop receiving location updates
   static stopLocationService() async {
@@ -18,9 +20,14 @@ class BackgroundLocation {
   }
 
   /// Start receiving location updated
-  static startLocationService({double distanceFilter = 0.0, bool forceAndroidLocationManager = false}) async {
-    return await _channel.invokeMethod('start_location_service',
-        <String, dynamic>{'distance_filter': distanceFilter, 'force_location_manager': forceAndroidLocationManager});
+  static startLocationService(
+      {double distanceFilter = 0.0,
+      bool forceAndroidLocationManager = false}) async {
+    return await _channel
+        .invokeMethod('start_location_service', <String, dynamic>{
+      'distance_filter': distanceFilter,
+      'force_location_manager': forceAndroidLocationManager
+    });
   }
 
   static setAndroidNotification(
@@ -62,29 +69,52 @@ class BackgroundLocation {
     return completer.future;
   }
 
-
-
   /// Register a function to recive location updates as long as the location
   /// service has started
   static getLocationUpdates(Function(Location) location) {
     // add a handler on the channel to recive updates from the native classes
-    _channel.setMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'location') {
-        var locationData = Map.from(methodCall.arguments);
-        // Call the user passed function
-        location(
-          Location(
-              latitude: locationData['latitude'],
-              longitude: locationData['longitude'],
-              altitude: locationData['altitude'],
-              accuracy: locationData['accuracy'],
-              bearing: locationData['bearing'],
-              speed: locationData['speed'],
-              time: locationData['time'],
-              isMock: locationData['is_mock']),
-        );
+
+    if (Platform.isAndroid) {
+      void _onEvent(Object? event) {
+        if (event != null) {
+          var locationData = Map.from(event as Map);
+          // Call the user passed function
+          location(
+            Location(
+                latitude: locationData['latitude'],
+                longitude: locationData['longitude'],
+                altitude: locationData['altitude'],
+                accuracy: locationData['accuracy'],
+                bearing: locationData['bearing'],
+                speed: locationData['speed'],
+                time: locationData['time'],
+                isMock: locationData['is_mock']),
+          );
+        }
       }
-    });
+
+      _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: null);
+    } else {
+      _channel.setMethodCallHandler((MethodCall methodCall) async {
+        print(
+            'android_bick :::  location server1 with out location manager ${methodCall.method}');
+        if (methodCall.method == 'location') {
+          var locationData = Map.from(methodCall.arguments);
+          // Call the user passed function
+          location(
+            Location(
+                latitude: locationData['latitude'],
+                longitude: locationData['longitude'],
+                altitude: locationData['altitude'],
+                accuracy: locationData['accuracy'],
+                bearing: locationData['bearing'],
+                speed: locationData['speed'],
+                time: locationData['time'],
+                isMock: locationData['is_mock']),
+          );
+        }
+      });
+    }
   }
 }
 

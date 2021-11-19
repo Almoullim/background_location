@@ -2,18 +2,17 @@ package com.almoullim.background_location
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.location.*
-import android.location.LocationListener
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.*
+import android.location.LocationListener
 import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.location.*
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.common.*
+import com.google.android.gms.location.*
 
 class LocationUpdatesService : Service() {
 
@@ -48,12 +47,14 @@ class LocationUpdatesService : Service() {
         var NOTIFICATION_MESSAGE = "Background service is running"
         var NOTIFICATION_ICON = "@mipmap/ic_launcher"
 
-        private const val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
+        private const val PACKAGE_NAME =
+            "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
         private const val CHANNEL_ID = "channel_01"
         internal const val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
         internal const val EXTRA_LOCATION = "$PACKAGE_NAME.location"
-        private const val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
+        private const val EXTRA_STARTED_FROM_NOTIFICATION =
+            "$PACKAGE_NAME.started_from_notification"
         var UPDATE_INTERVAL_IN_MILLISECONDS: Long = 1000
         private val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
         private const val NOTIFICATION_ID = 12345678
@@ -72,21 +73,26 @@ class LocationUpdatesService : Service() {
             intent.action = "Localisation"
             //intent.setClass(this, getMainActivityClass(this))
             val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getActivity(
+                    this,
+                    1,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
             } else {
                 PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
 
 
             val builder = NotificationCompat.Builder(this, "BackgroundLocation")
-                    .setContentTitle(NOTIFICATION_TITLE)
-                    .setOngoing(true)
-                    .setSound(null)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setSmallIcon(resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName))
-                    .setWhen(System.currentTimeMillis())
-                    .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
-                    .setContentIntent(pendingIntent)
+                .setContentTitle(NOTIFICATION_TITLE)
+                .setOngoing(true)
+                .setSound(null)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSmallIcon(resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName))
+                .setWhen(System.currentTimeMillis())
+                .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
+                .setContentIntent(pendingIntent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder.setChannelId(CHANNEL_ID)
@@ -100,13 +106,13 @@ class LocationUpdatesService : Service() {
     override fun onCreate() {
         val googleAPIAvailability = GoogleApiAvailability.getInstance()
             .isGooglePlayServicesAvailable(applicationContext)
-        
+
         isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
-        
+
 
         if (isGoogleApiAvailable && !this.forceLocationManager) {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            
+
             mFusedLocationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
@@ -114,6 +120,7 @@ class LocationUpdatesService : Service() {
                 }
             }
         } else {
+
             mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
             mLocationManagerCallback = LocationListener { location ->
@@ -156,10 +163,17 @@ class LocationUpdatesService : Service() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
             if (isGoogleApiAvailable && !this.forceLocationManager) {
-                mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
-                    mFusedLocationCallback!!, Looper.myLooper())
+                mFusedLocationClient!!.requestLocationUpdates(
+                    mLocationRequest,
+                    mFusedLocationCallback!!, Looper.myLooper()
+                )
             } else {
-                mLocationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, mLocationManagerCallback!!)
+                mLocationManager?.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0L,
+                    0f,
+                    mLocationManagerCallback!!
+                )
             }
         } catch (unlikely: SecurityException) {
             Utils.setRequestingLocationUpdates(this, false)
@@ -171,7 +185,8 @@ class LocationUpdatesService : Service() {
             isStarted = true
             startForeground(NOTIFICATION_ID, notification.build())
         } else {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(NOTIFICATION_ID, notification.build())
         }
     }
@@ -184,13 +199,13 @@ class LocationUpdatesService : Service() {
 
     private fun getLastLocation() {
         try {
-            if(isGoogleApiAvailable && !this.forceLocationManager) {
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
                 mFusedLocationClient!!.lastLocation
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful && task.result != null) {
-                                mLocation = task.result
-                            }
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful && task.result != null) {
+                            mLocation = task.result
                         }
+                    }
             } else {
                 mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             }
@@ -202,6 +217,7 @@ class LocationUpdatesService : Service() {
         mLocation = location
         val intent = Intent(ACTION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, location)
+
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
@@ -231,7 +247,6 @@ class LocationUpdatesService : Service() {
             } else {
                 mLocationManager!!.removeUpdates(mLocationManagerCallback!!)
             }
-
             Utils.setRequestingLocationUpdates(this, false)
             mNotificationManager!!.cancel(NOTIFICATION_ID)
         } catch (unlikely: SecurityException) {
