@@ -153,15 +153,19 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler, EventChannel.
     }
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        receiver = MyReceiver(events)
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(
-            receiver!!,
-            IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
-        )
+        try {
+            receiver = MyReceiver(events)
+            LocalBroadcastManager.getInstance(context!!).registerReceiver(
+                receiver!!,
+                IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+            )
+        } catch (name: Exception) {
+            print("error $name");
+        }
     }
 
     override fun onCancel(arguments: Any?) {
-        TODO("Not yet implemented")
+        print("hello $arguments");
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
