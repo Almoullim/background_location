@@ -218,7 +218,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Handle the response from a permission request
      * @return true if the result has been handled.
      */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?): Boolean {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
         Log.i(BackgroundLocationPlugin.TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             when {
