@@ -1,3 +1,8 @@
+### 0.9.0
+- Android: Set "exported" manifest setting to false [#163](https://github.com/Almoullim/background_location/pull/163)
+- Fixed an overrides of onRequestPermissionsResult [#151](https://github.com/Almoullim/background_location/pull/151)
+- Android: Update fastest interval during config change [#165](https://github.com/Almoullim/background_location/pull/165)
+
 ### 0.8.1
 Bug Fixes
 
