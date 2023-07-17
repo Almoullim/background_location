@@ -108,9 +108,14 @@ class LocationUpdatesService : Service() {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             
             mFusedLocationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult?) {
-                    super.onLocationResult(locationResult)
-                    onNewLocation(locationResult!!.lastLocation)
+                override fun onLocationResult(locationResult: LocationResult) {
+                    // Smart cast to 'Location' is impossible, because 'locationResult.lastLocation'
+                    // is a property that has open or custom getter
+                    val newLastLocation = locationResult.lastLocation
+                    if (newLastLocation is Location) {
+                        super.onLocationResult(locationResult)
+                        onNewLocation(newLastLocation)
+                    }
                 }
             }
         } else {
@@ -156,7 +161,7 @@ class LocationUpdatesService : Service() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
             if (isGoogleApiAvailable && !this.forceLocationManager) {
-                mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,
+                mFusedLocationClient!!.requestLocationUpdates(mLocationRequest!!,
                     mFusedLocationCallback!!, Looper.myLooper())
             } else {
                 mLocationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, mLocationManagerCallback!!)
