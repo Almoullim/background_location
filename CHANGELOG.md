@@ -1,3 +1,6 @@
+### 0.11.0
+- Upgrade gradle (for compatibility) and upgrade location services (fixes crashes) #183
+
 ### 0.9.0
 - Android: Set "exported" manifest setting to false [#163](https://github.com/Almoullim/background_location/pull/163)
 - Fixed an overrides of onRequestPermissionsResult [#151](https://github.com/Almoullim/background_location/pull/151)
