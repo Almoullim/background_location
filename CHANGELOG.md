@@ -1,4 +1,4 @@
-### 0.11.0
+### 0.11.8
 - Upgrade gradle (for compatibility) and upgrade location services (fixes crashes) #183
 
 ### 0.9.0
