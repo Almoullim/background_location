@@ -15,7 +15,7 @@ jobs:
       contents: write
     defaults:
       run:
-        working-directory: /
+        working-directory: ./
       
     steps:
     - name: Install Dart
