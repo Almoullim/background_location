@@ -1,3 +1,6 @@
+### 0.12.0
+- Android: Raise notification importance [#163](https://github.com/Almoullim/background_location/issues/167)
+
 ### 0.11.8
 - Upgrade gradle (for compatibility) and upgrade location services (fixes crashes) #183
 
