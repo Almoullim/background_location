@@ -48,6 +48,7 @@ BackgroundLocation.setAndroidConfiguration(1000);
 Start the location service. This will also ask the user for permission if not asked previously by another package.
 
 ```dart
+BackgroundLocation.stopLocationService(); //To stop any previous running services
 BackgroundLocation.startLocationService();
 ```
 
