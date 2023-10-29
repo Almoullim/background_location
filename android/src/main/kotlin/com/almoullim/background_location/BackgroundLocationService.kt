@@ -115,17 +115,17 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         return 0
     }
 
-    private fun isLocationServiceRunning(): Int {
+    private fun isLocationServiceRunning(): Boolean {
         val manager: ActivityManager = context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
             if (LocationUpdatesService::class.java.getName() == service.service.getClassName()) {
                 if (service.foreground)
-                    return 1
+                    return true
                 else
-                    return 0
+                    return false
             }
         }
-        return 0
+        return false
     }
 
     private fun stopLocationService(): Int {

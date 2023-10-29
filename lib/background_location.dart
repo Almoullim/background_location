@@ -20,7 +20,7 @@ class BackgroundLocation {
   /// Check if the location update service is running
   static Future<bool> isServiceRunning() async {
     var result = await _channel.invokeMethod('is_service_running');
-    return result == 1 || result == true;
+    return result == true;
   }
 
   /// Start receiving location updated
