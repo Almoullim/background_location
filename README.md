@@ -48,8 +48,12 @@ BackgroundLocation.setAndroidConfiguration(1000);
 Start the location service. This will also ask the user for permission if not asked previously by another package.
 
 ```dart
+BackgroundLocation.stopLocationService(); //To ensure that previously started services have been stopped, if desired
 BackgroundLocation.startLocationService();
 ```
+
+> *Note:* There is currently an open issue (#10) where, if the location service is started multiple times, the location callback will get called repeatedly. This can be worked around by calling BackgroundLocation.stopLocationService(); to stop any previous running services (such as from a previous run of the app) before starting a new one.
+
 
 Start location service by specifying `distanceFilter`. Defaults to `0` if not specified
 
