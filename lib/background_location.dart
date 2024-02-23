@@ -17,6 +17,12 @@ class BackgroundLocation {
     return await _channel.invokeMethod('stop_location_service');
   }
 
+  /// Check if the location update service is running
+  static Future<bool> isServiceRunning() async {
+    var result = await _channel.invokeMethod('is_service_running');
+    return result == true;
+  }
+
   /// Start receiving location updated
   static startLocationService({double distanceFilter = 0.0, bool forceAndroidLocationManager = false}) async {
     return await _channel.invokeMethod('start_location_service',

@@ -16,6 +16,7 @@ class _MyAppState extends State<MyApp> {
   String bearing = 'waiting...';
   String speed = 'waiting...';
   String time = 'waiting...';
+  bool? serviceRunning = null;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
               locationData('Bearing: ' + bearing),
               locationData('Speed: ' + speed),
               locationData('Time: ' + time),
+              locationData('IsServiceRunning: ' + serviceRunning.toString()),
               ElevatedButton(
                   onPressed: () async {
                     await BackgroundLocation.setAndroidNotification(
@@ -69,6 +71,7 @@ class _MyAppState extends State<MyApp> {
                         Bearing:  $bearing
                         Speed: $speed
                         Time: $time
+                        IsServiceRunning: $serviceRunning
                       ''');
                     });
                   },
@@ -78,6 +81,16 @@ class _MyAppState extends State<MyApp> {
                     BackgroundLocation.stopLocationService();
                   },
                   child: Text('Stop Location Service')),
+              ElevatedButton(
+                  onPressed: () {
+                    BackgroundLocation.isServiceRunning().then((value) {
+                      setState(() {
+                        serviceRunning = value;
+                      });
+                      print("Is Running: $value");
+                    });
+                  },
+                  child: Text('Check service')),
               ElevatedButton(
                   onPressed: () {
                     getCurrentLocation();
