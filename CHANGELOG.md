@@ -1,3 +1,7 @@
+### 0.13.0
+
+- Android upgrade and location running indicator [#196](https://github.com/Almoullim/background_location/pull/196)
+
 ### 0.12.0
 - Android: Raise notification importance [#163](https://github.com/Almoullim/background_location/issues/167)
 
