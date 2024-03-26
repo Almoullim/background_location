@@ -8,3 +8,5 @@ build/
 example/ios/Flutter/flutter_export_environment.sh
 .idea/
 .gradle/
+*.iml
+pubspec.lock
