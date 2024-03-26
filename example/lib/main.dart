@@ -58,7 +58,7 @@ class MyAppState extends State<MyApp> {
 
   Future<void> _getCurrentLocation() async {
     final location = await BackgroundLocation().getCurrentLocation();
-    debugPrint('Current Location: ${location.toMap()}');
+    debugPrint('Current Location: $location');
   }
 
   Future<void> _stopLocationService() async {
