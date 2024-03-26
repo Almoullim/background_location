@@ -72,7 +72,7 @@ class MyAppState extends State<MyApp> {
       icon: '@mipmap/ic_launcher',
     );
     //await BackgroundLocation.setAndroidConfiguration(1000);
-    await BackgroundLocation.startLocationService(distanceFilter: 20);
+    await BackgroundLocation.startLocationService();
     BackgroundLocation.getLocationUpdates(onLocationUpdate);
   }
 
@@ -85,8 +85,7 @@ class MyAppState extends State<MyApp> {
       'Accuracy: ${location.accuracy}\n'
       'Bearing:  ${location.bearing}\n'
       'Speed: ${location.speed}\n'
-      'Time: ${location.time}\n'
-      'IsServiceRunning: $_serviceRunning',
+      'Time: ${location.time}',
     );
     if (mounted) setState(() => _lastLocation = location);
   }
