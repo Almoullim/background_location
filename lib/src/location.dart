@@ -6,7 +6,7 @@ class Location {
   final double? bearing;
   final double? accuracy;
   final double? speed;
-  final double? time;
+  final DateTime time;
   final bool? isMock;
 
   const Location({
@@ -27,7 +27,7 @@ class Location {
         accuracy: map['accuracy'] as double?,
         bearing: map['bearing'] as double?,
         speed: map['speed'] as double?,
-        time: map['time'] as double?,
+        time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
         isMock: map['isMock'] as bool?,
       );
 

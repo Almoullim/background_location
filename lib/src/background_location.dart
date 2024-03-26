@@ -13,7 +13,7 @@ class BackgroundLocation {
       MethodChannel('com.almoullim.background_location/methods');
 
   /// Stop receiving location updates
-  static stopLocationService() async =>
+  static Future<dynamic> stopLocationService() async =>
       _channel.invokeMethod('stop_location_service');
 
   /// Check if the location update service is running
