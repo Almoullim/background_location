@@ -1,15 +1,15 @@
 /// Location data
 class Location {
-  double? latitude;
-  double? longitude;
-  double? altitude;
-  double? bearing;
-  double? accuracy;
-  double? speed;
-  double? time;
-  bool? isMock;
+  final double? latitude;
+  final double? longitude;
+  final double? altitude;
+  final double? bearing;
+  final double? accuracy;
+  final double? speed;
+  final double? time;
+  final bool? isMock;
 
-  Location({
+  const Location({
     required this.longitude,
     required this.latitude,
     required this.altitude,
@@ -19,6 +19,17 @@ class Location {
     required this.time,
     required this.isMock,
   });
+
+  factory Location.fromMap(Map<String, Object?> map) => Location(
+        longitude: map['longitude'] as double?,
+        latitude: map['latitude'] as double?,
+        altitude: map['altitude'] as double?,
+        accuracy: map['accuracy'] as double?,
+        bearing: map['bearing'] as double?,
+        speed: map['speed'] as double?,
+        time: map['time'] as double?,
+        isMock: map['isMock'] as bool?,
+      );
 
   Map<String, Object?> toMap() => {
         'latitude': latitude,

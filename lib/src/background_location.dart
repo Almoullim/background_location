@@ -24,15 +24,14 @@ class BackgroundLocation {
   static Future<dynamic> startLocationService({
     double distanceFilter = 0.0,
     bool forceAndroidLocationManager = false,
-  }) async {
-    return await _channel.invokeMethod(
-      'start_location_service',
-      <String, Object>{
-        'distance_filter': distanceFilter,
-        'force_location_manager': forceAndroidLocationManager
-      },
-    );
-  }
+  }) async =>
+      _channel.invokeMethod(
+        'start_location_service',
+        <String, Object>{
+          'distance_filter': distanceFilter,
+          'force_location_manager': forceAndroidLocationManager
+        },
+      );
 
   /// Set the notification on android devices.
   /// Does nothing if called on other platforms.
@@ -67,20 +66,11 @@ class BackgroundLocation {
   }
 
   /// Get the current location once.
-  Future<Location> getCurrentLocation() async {
+  Future<Location> getCurrentLocation() {
     var completer = Completer<Location>();
 
     getLocationUpdates((location) {
-      completer.complete(Location(
-        accuracy: location.accuracy,
-        altitude: location.altitude,
-        bearing: location.bearing,
-        isMock: location.isMock,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        speed: location.speed,
-        time: location.time,
-      ));
+      completer.complete(location);
     });
 
     return completer.future;
@@ -92,20 +82,9 @@ class BackgroundLocation {
     // add a handler on the channel to receive updates from the native classes
     _channel.setMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'location') {
-        final locationData = Map.from(methodCall.arguments);
+        final location = Location.fromMap(methodCall.arguments);
         // Call the user passed function
-        callback(
-          Location(
-            latitude: locationData['latitude'],
-            longitude: locationData['longitude'],
-            altitude: locationData['altitude'],
-            accuracy: locationData['accuracy'],
-            bearing: locationData['bearing'],
-            speed: locationData['speed'],
-            time: locationData['time'],
-            isMock: locationData['is_mock'],
-          ),
-        );
+        callback(location);
       }
     });
   }
