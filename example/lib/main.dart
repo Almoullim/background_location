@@ -88,12 +88,12 @@ class MyAppState extends State<MyApp> {
       'Time: ${location.time}\n'
       'IsServiceRunning: $_serviceRunning',
     );
-    setState(() => _lastLocation = location);
+    if (mounted) setState(() => _lastLocation = location);
   }
 
   Future<void> _checkService() async {
     final isRunning = await BackgroundLocation.isServiceRunning();
-    setState(() => _serviceRunning = isRunning);
+    if (mounted) setState(() => _serviceRunning = isRunning);
     debugPrint("Is Running: $isRunning");
   }
 
