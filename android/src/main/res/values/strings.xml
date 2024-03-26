@@ -13,9 +13,13 @@
 
 <resources>
     <string name="location_updates_label">Location Updates</string>
-    <string name="permission_rationale">Location permission is needed for core functionality</string>
-    <string name="permission_denied_explanation">Permission was denied, but is needed for core
-        functionality.</string>
+    <string name="permission_rationale">Location permission is needed for core
+        functionality
+    </string>
+    <string name="permission_denied_explanation">Permission was denied, but is
+        needed for core
+        functionality.
+    </string>
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
     <string name="request_location_updates">Request location updates</string>
