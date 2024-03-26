@@ -17,7 +17,10 @@ class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
         @SuppressWarnings("deprecation")
         fun registerWith(registrar: PluginRegistry.Registrar) {
             val service = BackgroundLocationService.getInstance()
-            service.onAttachedToEngine(registrar.context(), registrar.messenger())
+            service.onAttachedToEngine(
+                registrar.context(),
+                registrar.messenger()
+            )
             registrar.addRequestPermissionsResultListener(service)
         }
 
@@ -27,7 +30,10 @@ class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
 
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-        BackgroundLocationService.getInstance().onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
+        BackgroundLocationService.getInstance().onAttachedToEngine(
+            binding.applicationContext,
+            binding.binaryMessenger
+        )
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {

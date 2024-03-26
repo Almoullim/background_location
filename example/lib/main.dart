@@ -1,123 +1,99 @@
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String latitude = 'waiting...';
-  String longitude = 'waiting...';
-  String altitude = 'waiting...';
-  String accuracy = 'waiting...';
-  String bearing = 'waiting...';
-  String speed = 'waiting...';
-  String time = 'waiting...';
-  bool? serviceRunning = null;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+class MyAppState extends State<MyApp> {
+  Location? _lastLocation;
+  bool? _serviceRunning;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Background Location Service'),
-        ),
-        body: Center(
-          child: ListView(
-            children: <Widget>[
-              locationData('Latitude: ' + latitude),
-              locationData('Longitude: ' + longitude),
-              locationData('Altitude: ' + altitude),
-              locationData('Accuracy: ' + accuracy),
-              locationData('Bearing: ' + bearing),
-              locationData('Speed: ' + speed),
-              locationData('Time: ' + time),
-              locationData('IsServiceRunning: ' + serviceRunning.toString()),
-              ElevatedButton(
-                  onPressed: () async {
-                    await BackgroundLocation.setAndroidNotification(
-                      title: 'Background service is running',
-                      message: 'Background location in progress',
-                      icon: '@mipmap/ic_launcher',
-                    );
-                    //await BackgroundLocation.setAndroidConfiguration(1000);
-                    await BackgroundLocation.startLocationService(
-                        distanceFilter: 20);
-                    BackgroundLocation.getLocationUpdates((location) {
-                      setState(() {
-                        latitude = location.latitude.toString();
-                        longitude = location.longitude.toString();
-                        accuracy = location.accuracy.toString();
-                        altitude = location.altitude.toString();
-                        bearing = location.bearing.toString();
-                        speed = location.speed.toString();
-                        time = DateTime.fromMillisecondsSinceEpoch(
-                                location.time!.toInt())
-                            .toString();
-                      });
-                      print('''\n
-                        Latitude:  $latitude
-                        Longitude: $longitude
-                        Altitude: $altitude
-                        Accuracy: $accuracy
-                        Bearing:  $bearing
-                        Speed: $speed
-                        Time: $time
-                        IsServiceRunning: $serviceRunning
-                      ''');
-                    });
-                  },
-                  child: Text('Start Location Service')),
-              ElevatedButton(
-                  onPressed: () {
-                    BackgroundLocation.stopLocationService();
-                  },
-                  child: Text('Stop Location Service')),
-              ElevatedButton(
-                  onPressed: () {
-                    BackgroundLocation.isServiceRunning().then((value) {
-                      setState(() {
-                        serviceRunning = value;
-                      });
-                      print("Is Running: $value");
-                    });
-                  },
-                  child: Text('Check service')),
-              ElevatedButton(
-                  onPressed: () {
-                    getCurrentLocation();
-                  },
-                  child: Text('Get Current Location')),
-            ],
-          ),
+        appBar: AppBar(title: const Text('Background Location Service')),
+        body: ListView(
+          children: <Widget>[
+            Text(
+              'Latitude: ${_lastLocation?.latitude}\n'
+              'Longitude: ${_lastLocation?.longitude}\n'
+              'Altitude: ${_lastLocation?.altitude}\n'
+              'Accuracy: ${_lastLocation?.accuracy}\n'
+              'Bearing: ${_lastLocation?.bearing}\n'
+              'Speed: ${_lastLocation?.speed}\n'
+              'Time: ${_lastLocation?.time}\n'
+              'IsServiceRunning: $_serviceRunning',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            ElevatedButton(
+                onPressed: _startLocationService,
+                child: const Text('Start Location Service')),
+            ElevatedButton(
+                onPressed: _stopLocationService,
+                child: const Text('Stop Location Service')),
+            ElevatedButton(
+              onPressed: _checkService,
+              child: const Text('Check if service is running'),
+            ),
+            ElevatedButton(
+              onPressed: _getCurrentLocation,
+              child: const Text('Get Current Location'),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget locationData(String data) {
-    return Text(
-      data,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-      ),
-      textAlign: TextAlign.center,
-    );
+  Future<void> _getCurrentLocation() async {
+    final location = await BackgroundLocation().getCurrentLocation();
+    debugPrint('Current Location: $location');
   }
 
-  void getCurrentLocation() {
-    BackgroundLocation().getCurrentLocation().then((location) {
-      print('This is current Location ' + location.toMap().toString());
-    });
+  Future<void> _stopLocationService() async {
+    await BackgroundLocation.stopLocationService();
+  }
+
+  Future<void> _startLocationService() async {
+    await BackgroundLocation.setAndroidNotification(
+      title: 'Background service is running',
+      message: 'Background location in progress',
+      icon: '@mipmap/ic_launcher',
+    );
+    //await BackgroundLocation.setAndroidConfiguration(1000);
+    await BackgroundLocation.startLocationService();
+    BackgroundLocation.getLocationUpdates(onLocationUpdate);
+  }
+
+  void onLocationUpdate(Location location) {
+    debugPrint(
+      '\n'
+      'Latitude:  ${location.latitude}\n'
+      'Longitude: ${location.longitude}\n'
+      'Altitude: ${location.altitude}\n'
+      'Accuracy: ${location.accuracy}\n'
+      'Bearing:  ${location.bearing}\n'
+      'Speed: ${location.speed}\n'
+      'Time: ${location.time}',
+    );
+    if (mounted) setState(() => _lastLocation = location);
+  }
+
+  Future<void> _checkService() async {
+    final isRunning = await BackgroundLocation.isServiceRunning();
+    if (mounted) setState(() => _serviceRunning = isRunning);
+    debugPrint("Is Running: $isRunning");
   }
 
   @override
