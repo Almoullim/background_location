@@ -24,16 +24,27 @@ class BackgroundLocation {
   }
 
   /// Start receiving location updated
-  static startLocationService({double distanceFilter = 0.0, bool forceAndroidLocationManager = false}) async {
-    return await _channel.invokeMethod('start_location_service',
-        <String, dynamic>{'distance_filter': distanceFilter, 'force_location_manager': forceAndroidLocationManager});
+  static startLocationService({
+    double distanceFilter = 0.0,
+    bool forceAndroidLocationManager = false,
+  }) async {
+    return await _channel
+        .invokeMethod('start_location_service', <String, dynamic>{
+      'distance_filter': distanceFilter,
+      'force_location_manager': forceAndroidLocationManager
+    });
   }
 
-  static setAndroidNotification(
-      {String? title, String? message, String? icon}) async {
+  static setAndroidNotification({
+    String? title,
+    String? message,
+    String? icon,
+  }) async {
     if (Platform.isAndroid) {
-      return await _channel.invokeMethod('set_android_notification',
-          <String, dynamic>{'title': title, 'message': message, 'icon': icon});
+      return await _channel.invokeMethod(
+        'set_android_notification',
+        <String, dynamic>{'title': title, 'message': message, 'icon': icon},
+      );
     } else {
       //return Promise.resolve();
     }
@@ -62,15 +73,13 @@ class BackgroundLocation {
         latitude: l.latitude,
         longitude: l.longitude,
         speed: l.speed,
-        time: l.time
+        time: l.time,
       );
       completer.complete(location);
     });
 
     return completer.future;
   }
-
-
 
   /// Register a function to receive location updates as long as the location
   /// service has started
@@ -82,14 +91,15 @@ class BackgroundLocation {
         // Call the user passed function
         location(
           Location(
-              latitude: locationData['latitude'],
-              longitude: locationData['longitude'],
-              altitude: locationData['altitude'],
-              accuracy: locationData['accuracy'],
-              bearing: locationData['bearing'],
-              speed: locationData['speed'],
-              time: locationData['time'],
-              isMock: locationData['is_mock']),
+            latitude: locationData['latitude'],
+            longitude: locationData['longitude'],
+            altitude: locationData['altitude'],
+            accuracy: locationData['accuracy'],
+            bearing: locationData['bearing'],
+            speed: locationData['speed'],
+            time: locationData['time'],
+            isMock: locationData['is_mock'],
+          ),
         );
       }
     });
@@ -107,15 +117,16 @@ class Location {
   double? time;
   bool? isMock;
 
-  Location(
-      {@required this.longitude,
-      @required this.latitude,
-      @required this.altitude,
-      @required this.accuracy,
-      @required this.bearing,
-      @required this.speed,
-      @required this.time,
-      @required this.isMock});
+  Location({
+    @required this.longitude,
+    @required this.latitude,
+    @required this.altitude,
+    @required this.accuracy,
+    @required this.bearing,
+    @required this.speed,
+    @required this.time,
+    @required this.isMock,
+  });
 
   toMap() {
     var obj = {
@@ -126,7 +137,7 @@ class Location {
       'accuracy': accuracy,
       'speed': speed,
       'time': time,
-      'is_mock': isMock
+      'is_mock': isMock,
     };
     return obj;
   }
