@@ -12,7 +12,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   Location? _lastLocation;
-  bool? serviceRunning;
+  bool? _serviceRunning;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class MyAppState extends State<MyApp> {
               'Bearing: ${_lastLocation?.bearing}\n'
               'Speed: ${_lastLocation?.speed}\n'
               'Time: ${_lastLocation?.time}\n'
-              'IsServiceRunning: $serviceRunning',
+              'IsServiceRunning: $_serviceRunning',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -73,25 +73,27 @@ class MyAppState extends State<MyApp> {
     );
     //await BackgroundLocation.setAndroidConfiguration(1000);
     await BackgroundLocation.startLocationService(distanceFilter: 20);
-    BackgroundLocation.getLocationUpdates((location) {
-      debugPrint(
-        '\n'
-        'Latitude:  ${location.latitude}\n'
-        'Longitude: ${location.longitude}\n'
-        'Altitude: ${location.altitude}\n'
-        'Accuracy: ${location.accuracy}\n'
-        'Bearing:  ${location.bearing}\n'
-        'Speed: ${location.speed}\n'
-        'Time: ${location.time}\n'
-        'IsServiceRunning: $serviceRunning',
-      );
-      setState(() => _lastLocation = location);
-    });
+    BackgroundLocation.getLocationUpdates(onLocationUpdate);
+  }
+
+  void onLocationUpdate(Location location) {
+    debugPrint(
+      '\n'
+      'Latitude:  ${location.latitude}\n'
+      'Longitude: ${location.longitude}\n'
+      'Altitude: ${location.altitude}\n'
+      'Accuracy: ${location.accuracy}\n'
+      'Bearing:  ${location.bearing}\n'
+      'Speed: ${location.speed}\n'
+      'Time: ${location.time}\n'
+      'IsServiceRunning: $_serviceRunning',
+    );
+    setState(() => _lastLocation = location);
   }
 
   Future<void> _checkService() async {
     final isRunning = await BackgroundLocation.isServiceRunning();
-    setState(() => serviceRunning = isRunning);
+    setState(() => _serviceRunning = isRunning);
     debugPrint("Is Running: $isRunning");
   }
 

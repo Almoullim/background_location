@@ -27,7 +27,7 @@ class Location {
         accuracy: map['accuracy'] as double?,
         bearing: map['bearing'] as double?,
         speed: map['speed'] as double?,
-        time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
+        time: DateTime.fromMillisecondsSinceEpoch((map['time'] as double).toInt()),
         isMock: map['isMock'] as bool?,
       );
 

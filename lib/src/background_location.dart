@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:background_location/background_location.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 /// BackgroundLocation plugin to get background
@@ -81,10 +82,19 @@ class BackgroundLocation {
   static void getLocationUpdates(void Function(Location location) callback) {
     // add a handler on the channel to receive updates from the native classes
     _channel.setMethodCallHandler((MethodCall methodCall) async {
+      print('#1');
       if (methodCall.method == 'location') {
-        final location = Location.fromMap(methodCall.arguments);
-        // Call the user passed function
-        callback(location);
+        print('#2');
+        try {
+          final map = methodCall.arguments as Map<Object?, Object?>;
+          final location = Location.fromMap(map.cast<String, Object?>());
+          print('#3');
+          // Call the user passed function
+          callback.call(location);
+        } catch (error, stack) {
+          debugPrint(error.toString());
+          debugPrintStack(stackTrace: stack);
+        }
       }
     });
   }
