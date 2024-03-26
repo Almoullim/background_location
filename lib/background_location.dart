@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// BackgroundLocation plugin to get background
-/// lcoation updates in iOS and Android
+/// location updates in iOS and Android
 class BackgroundLocation {
   // The channel to be used for communication.
-  // This channel is also refrenced inside both iOS and Abdroid classes
+  // This channel is also referenced inside both iOS and Android classes
   static const MethodChannel _channel =
       MethodChannel('com.almoullim.background_location/methods');
 
@@ -53,16 +53,18 @@ class BackgroundLocation {
   Future<Location> getCurrentLocation() async {
     var completer = Completer<Location>();
 
-    var _location = Location();
-    await getLocationUpdates((location) {
-      _location.latitude = location.latitude;
-      _location.longitude = location.longitude;
-      _location.accuracy = location.accuracy;
-      _location.altitude = location.altitude;
-      _location.bearing = location.bearing;
-      _location.speed = location.speed;
-      _location.time = location.time;
-      completer.complete(_location);
+    await getLocationUpdates((l) {
+      final location = Location(
+        accuracy: l.accuracy,
+        altitude: l.altitude,
+        bearing: l.bearing,
+        isMock: l.isMock,
+        latitude: l.latitude,
+        longitude: l.longitude,
+        speed: l.speed,
+        time: l.time
+      );
+      completer.complete(location);
     });
 
     return completer.future;
@@ -70,10 +72,10 @@ class BackgroundLocation {
 
 
 
-  /// Register a function to recive location updates as long as the location
+  /// Register a function to receive location updates as long as the location
   /// service has started
   static getLocationUpdates(Function(Location) location) {
-    // add a handler on the channel to recive updates from the native classes
+    // add a handler on the channel to receive updates from the native classes
     _channel.setMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'location') {
         var locationData = Map.from(methodCall.arguments);

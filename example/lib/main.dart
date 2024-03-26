@@ -1,14 +1,16 @@
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   String latitude = 'waiting...';
   String longitude = 'waiting...';
   String altitude = 'waiting...';
@@ -16,7 +18,7 @@ class _MyAppState extends State<MyApp> {
   String bearing = 'waiting...';
   String speed = 'waiting...';
   String time = 'waiting...';
-  bool? serviceRunning = null;
+  bool? serviceRunning;
 
   @override
   void initState() {
@@ -33,14 +35,14 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ListView(
             children: <Widget>[
-              locationData('Latitude: ' + latitude),
-              locationData('Longitude: ' + longitude),
-              locationData('Altitude: ' + altitude),
-              locationData('Accuracy: ' + accuracy),
-              locationData('Bearing: ' + bearing),
-              locationData('Speed: ' + speed),
-              locationData('Time: ' + time),
-              locationData('IsServiceRunning: ' + serviceRunning.toString()),
+              locationData('Latitude: $latitude'),
+              locationData('Longitude: $longitude'),
+              locationData('Altitude: $altitude'),
+              locationData('Accuracy: $accuracy'),
+              locationData('Bearing: $bearing'),
+              locationData('Speed: $speed'),
+              locationData('Time: $time'),
+              locationData('IsServiceRunning: $serviceRunning'),
               ElevatedButton(
                   onPressed: () async {
                     await BackgroundLocation.setAndroidNotification(
@@ -63,7 +65,7 @@ class _MyAppState extends State<MyApp> {
                                 location.time!.toInt())
                             .toString();
                       });
-                      print('''\n
+                      debugPrint('''\n
                         Latitude:  $latitude
                         Longitude: $longitude
                         Altitude: $altitude
@@ -75,27 +77,27 @@ class _MyAppState extends State<MyApp> {
                       ''');
                     });
                   },
-                  child: Text('Start Location Service')),
+                  child: const Text('Start Location Service')),
               ElevatedButton(
                   onPressed: () {
                     BackgroundLocation.stopLocationService();
                   },
-                  child: Text('Stop Location Service')),
+                  child: const Text('Stop Location Service')),
               ElevatedButton(
                   onPressed: () {
                     BackgroundLocation.isServiceRunning().then((value) {
                       setState(() {
                         serviceRunning = value;
                       });
-                      print("Is Running: $value");
+                      debugPrint("Is Running: $value");
                     });
                   },
-                  child: Text('Check service')),
+                  child: const Text('Check service')),
               ElevatedButton(
                   onPressed: () {
                     getCurrentLocation();
                   },
-                  child: Text('Get Current Location')),
+                  child: const Text('Get Current Location')),
             ],
           ),
         ),
@@ -106,7 +108,7 @@ class _MyAppState extends State<MyApp> {
   Widget locationData(String data) {
     return Text(
       data,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
@@ -116,7 +118,7 @@ class _MyAppState extends State<MyApp> {
 
   void getCurrentLocation() {
     BackgroundLocation().getCurrentLocation().then((location) {
-      print('This is current Location ' + location.toMap().toString());
+      debugPrint('This is current Location ${location.toMap()}');
     });
   }
 
