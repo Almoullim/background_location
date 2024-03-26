@@ -239,7 +239,7 @@ class LocationUpdatesService : Service() {
                 mLocation =
                     mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             }
-        } catch (unlikely: SecurityException) {
+        } catch (_: SecurityException) {
         }
     }
 

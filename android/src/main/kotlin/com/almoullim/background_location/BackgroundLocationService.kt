@@ -187,8 +187,8 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
     }
 
     override fun onMethodCall(
-        @NonNull call: MethodCall,
-        @NonNull result: MethodChannel.Result
+        call: MethodCall,
+        result: MethodChannel.Result
     ) {
         when (call.method) {
             "stop_location_service" -> result.success(stopLocationService())
