@@ -10,6 +10,5 @@ example/ios/Flutter/flutter_export_environment.sh
 .gradle/
 *.iml
 pubspec.lock
-.metadata
 .project
 .vscode/
