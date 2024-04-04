@@ -21,6 +21,7 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
             SwiftBackgroundLocationPlugin.locationManager = CLLocationManager()
             SwiftBackgroundLocationPlugin.locationManager?.delegate = self
             SwiftBackgroundLocationPlugin.locationManager?.requestAlwaysAuthorization()
+            SwiftBackgroundLocationPlugin.locationManager?.startMonitoringSignificantLocationChanges()
 
             SwiftBackgroundLocationPlugin.locationManager?.allowsBackgroundLocationUpdates = true
             if #available(iOS 11.0, *) {
