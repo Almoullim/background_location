@@ -5,16 +5,16 @@ import 'package:background_location/background_location.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-const BACKGROUND_CHANNEL_ID = "almoullim.com/background_location_service";
-const ARG_CALLBACK = "ARG_CALLBACK";
-const ARG_LOCATION = "ARG_LOCATION";
-const ARG_LOCATIONS = "ARG_LOCATIONS";
-const BCM_LOCATION = "BCM_LOCATION";
-const BCM_NOTIFICATION_ACTION = "BCM_NOTIFICATION_ACTION";
+const BACKGROUND_CHANNEL_ID = 'almoullim.com/background_location_service';
+const ARG_CALLBACK = 'ARG_CALLBACK';
+const ARG_LOCATION = 'ARG_LOCATION';
+const ARG_LOCATIONS = 'ARG_LOCATIONS';
+const BCM_LOCATION = 'BCM_LOCATION';
+const BCM_NOTIFICATION_ACTION = 'BCM_NOTIFICATION_ACTION';
 
 @pragma('vm:entry-point')
 void callbackHandler() {
-  const MethodChannel _backgroundChannel = MethodChannel(BACKGROUND_CHANNEL_ID);
+  const _backgroundChannel = MethodChannel(BACKGROUND_CHANNEL_ID);
   WidgetsFlutterBinding.ensureInitialized();
 
   _backgroundChannel.setMethodCallHandler((MethodCall call) async {
@@ -23,7 +23,7 @@ void callbackHandler() {
 
       int callbackArg = args[ARG_CALLBACK] ?? 0;
       if (callbackArg != 0) {
-        final Function? callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
+        final callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
         if (callback != null) {
           var locs = List.empty(growable: true);
           var locations = args[ARG_LOCATIONS];
@@ -37,26 +37,27 @@ void callbackHandler() {
           callback(locs);
         }
       } else {
-        log("BGLocationCallback: $args");
+        log('BGLocationCallback: $args');
       }
     } else if (BCM_NOTIFICATION_ACTION == call.method) {
       final Map<dynamic, dynamic> args = call.arguments;
 
-      log("BGActionCallback: $args");
+      log('BGActionCallback: $args');
       int callbackArg = args[ARG_CALLBACK] ?? 0;
       if (callbackArg != 0) {
-        final Function? callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
+        final callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
         final dynamic locationJson = args[ARG_LOCATION];
-        Location? location = null;
+        Location? location;
         if (locationJson != null) {
           location = Location.fromJson(locationJson);
         }
-        if (callback != null)
+        if (callback != null) {
           callback(location);
+        }
       } else {
-        log("BGActionCallback: $args");
+        log('BGActionCallback: $args');
       }
     }
   });
-  _backgroundChannel.invokeMethod("BackgroundLocationService.initialized");
+  _backgroundChannel.invokeMethod('BackgroundLocationService.initialized');
 }

@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
                         bearing = location.bearing.toString();
                         speed = location.speed.toString();
                         time = DateTime.fromMillisecondsSinceEpoch(
-                                location.time!.toInt())
+                                location.time.toInt())
                             .toString();
                       });
                       print('''\n

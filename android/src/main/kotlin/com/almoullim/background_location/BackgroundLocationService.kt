@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -102,14 +103,33 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         }
     }
 
-    private fun startLocationService(distanceFilter: Double?, forceLocationManager : Boolean?): Int{
+    private fun startLocationService(
+        startOnBoot: Boolean?,
+        interval: Long?,
+        fastestInterval: Long?,
+        priority: Int?,
+        distanceFilter: Double?,
+        forceLocationManager : Boolean?,
+        callbackHandle: Long?,
+        locationCallback: Long?,
+    ): Int{
         LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
                 IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
         if (!bound) {
             val intent = Intent(context, LocationUpdatesService::class.java)
+            intent.setAction(LocationUpdatesService.ACTION_START_FOREGROUND_SERVICE)
+            intent.putExtra("startOnBoot", startOnBoot)
+            intent.putExtra("interval", interval?.toLong())
+            intent.putExtra("fastest_interval", fastestInterval?.toLong())
+            intent.putExtra("priority", priority)
             intent.putExtra("distance_filter", distanceFilter)
             intent.putExtra("force_location_manager", forceLocationManager)
-            context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+            intent.putExtra("callbackHandle", callbackHandle)
+            intent.putExtra("locationCallback", locationCallback)
+
+            ContextCompat.startForegroundService(context, intent)
+            context!!.bindService(intent, serviceConnection)
+
         }
 
         return 0
@@ -140,10 +160,20 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         return 0
     }
 
-    private fun setAndroidNotification(title: String?, message: String?, icon: String?):Int{
+    private fun setAndroidNotification(
+        channelID: String?
+        title: String?
+        message: String?
+        icon: String?
+        actionText: String?
+        callback: Long,
+    ):Int{
+        if (channelID != null) LocationUpdatesService.NOTIFICATION_CHANNEL_ID = channelID
         if (title != null) LocationUpdatesService.NOTIFICATION_TITLE = title
         if (message != null) LocationUpdatesService.NOTIFICATION_MESSAGE = message
         if (icon != null) LocationUpdatesService.NOTIFICATION_ICON = icon
+        if (actionText != null) LocationUpdatesService.NOTIFICATION_ACTION = actionText
+        if (callback != 0L) LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
 
         if (service != null) {
             service?.updateNotification()
@@ -164,9 +194,58 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
             "stop_location_service" -> result.success(stopLocationService())
-            "start_location_service" -> result.success(startLocationService(call.argument("distance_filter"), call.argument("force_location_manager")))
+            "start_location_service" -> {
+                var locationCallback: Long? = 0L
+                try {
+                    locationCallback = call.argument("locationCallback")
+                } catch (ex: Throwable) {
+                }
+
+                var callbackHandle: Long? = 0L
+                try {
+                    callbackHandle = call.argument("callbackHandle")
+                } catch (ex: Throwable) {
+                }
+
+                val startOnBoot: Boolean? = call.argument("startOnBoot") ?: false
+                val interval: Int? = call.argument("interval")
+                val fastestInterval: Int? = call.argument("fastest_interval")
+                val priority: Int? = call.argument("priority")
+                val distanceFilter: Double? = call.argument("distance_filter")
+                val forceLocationManager: bool? = call.argument("force_location_manager")
+
+                result.success(startLocationService(
+                    startOnBoot,
+                    interval,
+                    fastestInterval,
+                    priority,
+                    distanceFilter,
+                    forceLocationManager,
+                    callbackHandle,
+                    locationCallback,
+                ))
+            }
             "is_service_running" -> result.success(isLocationServiceRunning())
-            "set_android_notification" -> result.success(setAndroidNotification(call.argument("title"),call.argument("message"),call.argument("icon")))
+            "set_android_notification" -> {
+                val channelID: String? = call.argument("channelID");
+                val notificationTitle: String? = call.argument("title");
+                val notificationMessage: String? = call.argument("message");
+                val notificationIcon: String? = call.argument("icon");
+                val actionText: String? = call.argument("actionText");
+                var callback: Long = 0L
+                try {
+                    callback = call.argument("actionCallback") ?: 0L
+                } catch (ex: Throwable) {
+                }
+
+                result.success(
+                    setAndroidNotification(
+                        call.argument("title"),
+                        call.argument("message"),
+                        call.argument("icon")
+                    )
+                )
+            }
             "set_configuration" -> result.success(setConfiguration(call.argument<String>("interval")?.toLongOrNull()))
             else -> result.notImplemented()
         }
