@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
@@ -5,7 +6,7 @@ import 'package:background_location/background_location.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-const BACKGROUND_CHANNEL_ID = 'almoullim.com/background_location_service';
+const BACKGROUND_CHANNEL_ID = 'com.almoullim.background_location/background';
 const ARG_CALLBACK = 'ARG_CALLBACK';
 const ARG_LOCATION = 'ARG_LOCATION';
 const ARG_LOCATIONS = 'ARG_LOCATIONS';
@@ -23,7 +24,8 @@ void callbackHandler() {
 
       int callbackArg = args[ARG_CALLBACK] ?? 0;
       if (callbackArg != 0) {
-        final callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
+        final callback = PluginUtilities.getCallbackFromHandle(
+            CallbackHandle.fromRawHandle(callbackArg));
         if (callback != null) {
           var locs = List.empty(growable: true);
           var locations = args[ARG_LOCATIONS];
@@ -36,16 +38,14 @@ void callbackHandler() {
           }
           callback(locs);
         }
-      } else {
-        log('BGLocationCallback: $args');
       }
     } else if (BCM_NOTIFICATION_ACTION == call.method) {
       final Map<dynamic, dynamic> args = call.arguments;
 
-      log('BGActionCallback: $args');
       int callbackArg = args[ARG_CALLBACK] ?? 0;
       if (callbackArg != 0) {
-        final callback = PluginUtilities.getCallbackFromHandle(CallbackHandle.fromRawHandle(callbackArg));
+        final callback = PluginUtilities.getCallbackFromHandle(
+            CallbackHandle.fromRawHandle(callbackArg));
         final dynamic locationJson = args[ARG_LOCATION];
         Location? location;
         if (locationJson != null) {
@@ -54,8 +54,6 @@ void callbackHandler() {
         if (callback != null) {
           callback(location);
         }
-      } else {
-        log('BGActionCallback: $args');
       }
     }
   });

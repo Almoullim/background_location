@@ -26,8 +26,7 @@ enum LocationPriority {
 class BackgroundLocation {
   // The channel to be used for communication.
   // This channel is also referenced inside both iOS and Abdroid classes
-  static const MethodChannel _channel =
-      MethodChannel('com.almoullim.background_location/methods');
+  static const MethodChannel _channel = MethodChannel('com.almoullim.background_location/methods');
 
   /// Stop receiving location updates
   static Future stopLocationService() async {
@@ -50,9 +49,10 @@ class BackgroundLocation {
     LocationPriority priority = LocationPriority.PRIORITY_HIGH_ACCURACY,
     LocationCallback? backgroundCallback,
   }) async {
-    var callbackHandle = PluginUtilities.getCallbackHandle(callbackHandler)!.toRawHandle();
+    var callbackHandle = 0;
     var locationCallback = 0;
     if (backgroundCallback != null) {
+      callbackHandle = PluginUtilities.getCallbackHandle(callbackHandler)!.toRawHandle();
       try {
         locationCallback =
             PluginUtilities.getCallbackHandle(backgroundCallback)!
@@ -131,7 +131,7 @@ class BackgroundLocation {
 
   /// Register a function to receive location updates as long as the location
   /// service has started
-  static Future<void> getLocationUpdates(Function(Location) location) async {
+  static Future getLocationUpdates(Function(Location) location) async {
     // add a handler on the channel to receive updates from the native classes
     return _channel.setMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'location') {
@@ -150,20 +150,6 @@ class BackgroundLocation {
         );
       }
     });
-  }
-
-  /// Register a function to receive location updates as long as the location
-  /// service has started
-  static StreamController<Location> getLocationUpdateStream() {
-    var streamController = StreamController<Location>();
-
-    getLocationUpdates((location) {
-      if (streamController.isClosed) return;
-
-      streamController.add(location);
-    });
-
-    return streamController;
   }
 }
 

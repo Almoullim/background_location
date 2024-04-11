@@ -201,7 +201,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         if (backgroundEngine != null && backgroundEngine?.dartExecutor != null) {
             backgroundChannel = MethodChannel(
                 backgroundEngine!!.dartExecutor.binaryMessenger,
-                "almoullim.com/background_location_service"
+                "com.almoullim.background_location/background"
             )
         }
         backgroundChannel?.setMethodCallHandler(this)
