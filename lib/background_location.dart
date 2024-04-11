@@ -53,17 +53,7 @@ class BackgroundLocation {
   Future<Location> getCurrentLocation() async {
     var completer = Completer<Location>();
 
-    var _location = Location();
-    await getLocationUpdates((location) {
-      _location.latitude = location.latitude;
-      _location.longitude = location.longitude;
-      _location.accuracy = location.accuracy;
-      _location.altitude = location.altitude;
-      _location.bearing = location.bearing;
-      _location.speed = location.speed;
-      _location.time = location.time;
-      completer.complete(_location);
-    });
+    await getLocationUpdates(completer.complete);
 
     return completer.future;
   }
@@ -96,24 +86,25 @@ class BackgroundLocation {
 
 /// about the user current location
 class Location {
-  double? latitude;
-  double? longitude;
-  double? altitude;
-  double? bearing;
-  double? accuracy;
-  double? speed;
-  double? time;
-  bool? isMock;
+  double latitude;
+  double longitude;
+  double altitude;
+  double bearing;
+  double accuracy;
+  double speed;
+  double time;
+  bool isMock;
 
-  Location(
-      {@required this.longitude,
-      @required this.latitude,
-      @required this.altitude,
-      @required this.accuracy,
-      @required this.bearing,
-      @required this.speed,
-      @required this.time,
-      @required this.isMock});
+  Location({
+    required this.longitude,
+    required this.latitude,
+    required this.altitude,
+    required this.accuracy,
+    required this.bearing,
+    required this.speed,
+    required this.time,
+    required this.isMock,
+  });
 
   toMap() {
     var obj = {
