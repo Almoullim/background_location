@@ -50,8 +50,7 @@ class BackgroundLocation {
     LocationPriority priority = LocationPriority.PRIORITY_HIGH_ACCURACY,
     LocationCallback? backgroundCallback,
   }) async {
-    var callbackHandle =
-    PluginUtilities.getCallbackHandle(callbackHandler)!.toRawHandle();
+    var callbackHandle = PluginUtilities.getCallbackHandle(callbackHandler)!.toRawHandle();
     var locationCallback = 0;
     if (backgroundCallback != null) {
       try {

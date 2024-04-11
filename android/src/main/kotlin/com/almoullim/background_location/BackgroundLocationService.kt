@@ -105,8 +105,8 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
 
     private fun startLocationService(
         startOnBoot: Boolean?,
-        interval: Long?,
-        fastestInterval: Long?,
+        interval: Int?,
+        fastestInterval: Int?,
         priority: Int?,
         distanceFilter: Double?,
         forceLocationManager : Boolean?,
@@ -127,8 +127,8 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
             intent.putExtra("callbackHandle", callbackHandle)
             intent.putExtra("locationCallback", locationCallback)
 
-            ContextCompat.startForegroundService(context, intent)
-            context!!.bindService(intent, serviceConnection)
+            ContextCompat.startForegroundService(context!!, intent)
+            context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
 
         }
 
@@ -149,8 +149,12 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     }
 
     private fun stopLocationService(): Int {
-        service?.removeLocationUpdates()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(receiver!!)
+
+        val intent = Intent(context!!, LocationUpdatesService::class.java)
+        intent.setAction("${context!!.packageName}.service_requests")
+        intent.putExtra(LocationUpdatesService.ACTION_SERVICE_REQUEST, LocationUpdatesService.ACTION_STOP_FOREGROUND_SERVICE)
+        LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
 
         if (bound) {
             context!!.unbindService(serviceConnection)
@@ -161,11 +165,11 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     }
 
     private fun setAndroidNotification(
-        channelID: String?
-        title: String?
-        message: String?
-        icon: String?
-        actionText: String?
+        channelID: String?,
+        title: String?,
+        message: String?,
+        icon: String?,
+        actionText: String?,
         callback: Long,
     ):Int{
         if (channelID != null) LocationUpdatesService.NOTIFICATION_CHANNEL_ID = channelID
@@ -212,7 +216,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                 val fastestInterval: Int? = call.argument("fastest_interval")
                 val priority: Int? = call.argument("priority")
                 val distanceFilter: Double? = call.argument("distance_filter")
-                val forceLocationManager: bool? = call.argument("force_location_manager")
+                val forceLocationManager: Boolean? = call.argument("force_location_manager")
 
                 result.success(startLocationService(
                     startOnBoot,
@@ -240,9 +244,12 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
 
                 result.success(
                     setAndroidNotification(
-                        call.argument("title"),
-                        call.argument("message"),
-                        call.argument("icon")
+                        channelID,
+                        notificationTitle,
+                        notificationMessage,
+                        notificationIcon,
+                        actionText,
+                        callback,
                     )
                 )
             }
@@ -288,7 +295,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         } else {
             Log.i(BackgroundLocationPlugin.TAG, "Requesting permission")
             ActivityCompat.requestPermissions(activity!!,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS),
                     REQUEST_PERMISSIONS_REQUEST_CODE)
         }
     }
