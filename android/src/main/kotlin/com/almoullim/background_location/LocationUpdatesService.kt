@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
@@ -87,31 +88,82 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         private const val STOP_SERVICE = "stop_service"
     }
 
+    fun getDrawableResourceId(context: Context, bitmapReference: String): Int {
+        val reference: Array<String> = bitmapReference.split("/").toTypedArray()
+        try {
+            var resId: Int
+            val type = "drawable"
+            val label = reference[1]
+
+            // Resources protected from obfuscation
+            // https://developer.android.com/studio/build/shrink-code#strict-reference-checks
+            val name: String = String.format("res_%1s", label)
+            resId = context.getResources().getIdentifier(name, type, context.getPackageName())
+            Log.w(TAG, "Getting resource: $name - $resId")
+            if (resId == 0) {
+                resId = context.getResources().getIdentifier(label, type, context.getPackageName())
+            }
+            return resId
+        } catch (e: Exception) {
+            Log.w(TAG, "Error getting resource: $bitmapReference", e)
+            e.printStackTrace()
+        }
+        return 0
+    }
 
     private val notification: NotificationCompat.Builder
-        @SuppressLint("UnspecifiedImmutableFlag")
         get() {
 
             val intent = Intent(this, getMainActivityClass(this))
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
             intent.action = "Localisation"
             //intent.setClass(this, getMainActivityClass(this))
-            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-            } else {
-                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            }
-
+            val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
 
             val builder = NotificationCompat.Builder(this, "BackgroundLocation")
-                    .setContentTitle(NOTIFICATION_TITLE)
-                    .setOngoing(true)
-                    .setSound(null)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setSmallIcon(resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName))
-                    .setWhen(System.currentTimeMillis())
-                    .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
-                    .setContentIntent(pendingIntent)
+                .setContentTitle(NOTIFICATION_TITLE)
+                .setOngoing(true)
+                .setSound(null)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setWhen(System.currentTimeMillis())
+                .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
+                .setContentIntent(pendingIntent)
+
+            try {
+                var resourceId: Int = 0
+                if (NOTIFICATION_ICON.startsWith("@mipmap"))
+                    resourceId = resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName)
+                if (NOTIFICATION_ICON.startsWith("@drawable")) {
+                    resourceId = getDrawableResourceId(this, NOTIFICATION_ICON)
+                }
+
+                if (resourceId != 0) {
+                    ContextCompat.getDrawable(this, resourceId)
+                    builder.setSmallIcon(resourceId)
+                } else {
+                    Log.w(TAG, "Provided resource resolved to $resourceId ${getPackageName()} - $NOTIFICATION_ICON")
+                    builder.setSmallIcon(resources.getIdentifier("@mipmap/ic_launcher", "mipmap", packageName))
+                }
+            } catch (tr: Throwable) {
+                Log.w(TAG, "Unable to set small notification icon", tr)
+                builder.setSmallIcon(resources.getIdentifier("@mipmap/ic_launcher", "mipmap", packageName))
+            }
+
+            if (NOTIFICATION_ACTION?.isNotEmpty() == true && NOTIFICATION_ACTION_CALLBACK != null) {
+                val actionIntent = Intent(this, LocationUpdatesService::class.java)
+                actionIntent.putExtra("ARG_CALLBACK", NOTIFICATION_ACTION_CALLBACK ?: 0L)
+                actionIntent.action = ACTION_NOTIFICATION_ACTIONED
+
+                val action = NotificationCompat.Action.Builder(
+                    0, NOTIFICATION_ACTION!!, PendingIntent.getService(
+                        this,
+                        0,
+                        actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                ).build()
+                builder.addAction(action)
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder.setChannelId(NOTIFICATION_CHANNEL_ID)
@@ -121,7 +173,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         }
 
     private inner class ActionRequestReceiver : BroadcastReceiver() {
-
         override fun onReceive(context: Context, intent: Intent) {
             if (intent == null) return;
             val action: String? = intent.getStringExtra(ACTION_SERVICE_REQUEST)
@@ -136,8 +187,8 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     }
 
     private var mServiceHandler: Handler? = null
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.i("LocationUpdatesService","onStartCommand - ${intent?.getAction()}")
         if (intent == null) {
             return super.onStartCommand(intent, flags, startId)
         }
@@ -170,8 +221,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         }
         return START_STICKY
     }
-
-
     fun triggerForegroundServiceStart(intent: Intent) {
         FlutterInjector.instance().flutterLoader().ensureInitializationComplete(this, null)
         UPDATE_INTERVAL_IN_MILLISECONDS = intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS) ?: UPDATE_INTERVAL_IN_MILLISECONDS
