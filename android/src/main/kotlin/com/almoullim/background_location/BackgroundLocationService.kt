@@ -177,7 +177,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         if (message != null) LocationUpdatesService.NOTIFICATION_MESSAGE = message
         if (icon != null) LocationUpdatesService.NOTIFICATION_ICON = icon
         if (actionText != null) LocationUpdatesService.NOTIFICATION_ACTION = actionText
-        if (callback != 0L) LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
+        LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
 
         if (service != null) {
             service?.updateNotification()
@@ -302,9 +302,11 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
 
     private inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            val actionType = intent.getStringExtra(LocationUpdatesService.ACTION_BROADCAST_TYPE)
+
             val location = intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
+            val locationMap = HashMap<String, Any>()
             if (location != null) {
-                val locationMap = HashMap<String, Any>()
                 locationMap["latitude"] = location.latitude
                 locationMap["longitude"] = location.longitude
                 locationMap["altitude"] = location.altitude
@@ -313,7 +315,16 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                 locationMap["speed"] = location.speed.toDouble()
                 locationMap["time"] = location.time.toDouble()
                 locationMap["is_mock"] = location.isFromMockProvider
-                channel.invokeMethod("location", locationMap, null)
+            }
+
+            when (actionType) {
+                LocationUpdatesService.ACTION_BROADCAST_LOCATION -> channel.invokeMethod("location", locationMap, null)
+                LocationUpdatesService.ACTION_NOTIFICATION_ACTIONED -> {
+                    val result = HashMap<String, Any>()
+                    result["ARG_LOCATION"] = locationMap
+                    result["ARG_CALLBACK"] = intent.getLongExtra(LocationUpdatesService.EXTRA_ACTION_CALLBACK, 0L)
+                    channel.invokeMethod("notificationAction", result, null)
+                }
             }
         }
     }
@@ -322,7 +333,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Handle the response from a permission request
      * @return true if the result has been handled.
      */
-override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean{
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean{
         Log.i(BackgroundLocationPlugin.TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             when {

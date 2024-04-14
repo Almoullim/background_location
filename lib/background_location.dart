@@ -26,7 +26,25 @@ enum LocationPriority {
 class BackgroundLocation {
   // The channel to be used for communication.
   // This channel is also referenced inside both iOS and Abdroid classes
-  static const MethodChannel _channel = MethodChannel('com.almoullim.background_location/methods');
+  static final MethodChannel _channel = MethodChannel('com.almoullim.background_location/methods')..setMethodCallHandler((MethodCall methodCall) async {
+    switch(methodCall.method) {
+      case 'location':
+        var locationData = Map.from(methodCall.arguments);
+        locationCallbackStream?.add(Location.fromJson(locationData));
+        break;
+      case 'notificationAction':
+        var callback = notificationActionCallback;
+        var response = Map.from(methodCall.arguments);
+        var location = response[ARG_LOCATION];
+        if (callback != null) {
+          callback(Location.fromJson(location));
+        }
+        break;
+    }
+  });
+
+  static StreamController<Location>? locationCallbackStream;
+  static OptLocationCallback? notificationActionCallback;
 
   /// Stop receiving location updates
   static Future stopLocationService() async {
@@ -86,11 +104,10 @@ class BackgroundLocation {
   }) async {
     if (Platform.isAndroid) {
       var callback = 0;
+      notificationActionCallback = actionCallback;
       if (actionCallback != null) {
         try {
-          callback =
-              PluginUtilities.getCallbackHandle(actionCallback)!
-                  .toRawHandle();
+          callback = PluginUtilities.getCallbackHandle(actionCallback)?.toRawHandle() ?? 0;
         } catch (ex, stack) {
           log('Error getting callback handle', error: ex, stackTrace: stack);
         }
@@ -131,25 +148,14 @@ class BackgroundLocation {
 
   /// Register a function to receive location updates as long as the location
   /// service has started
-  static Future getLocationUpdates(Function(Location) location) async {
-    // add a handler on the channel to receive updates from the native classes
-    return _channel.setMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'location') {
-        var locationData = Map.from(methodCall.arguments);
-        // Call the user passed function
-        location(
-          Location(
-              latitude: locationData['latitude'],
-              longitude: locationData['longitude'],
-              altitude: locationData['altitude'],
-              accuracy: locationData['accuracy'],
-              bearing: locationData['bearing'],
-              speed: locationData['speed'],
-              time: locationData['time'],
-              isMock: locationData['is_mock']),
-        );
-      }
-    });
+  static StreamController<Location>? getLocationUpdates(Function(Location) location) {
+    if (locationCallbackStream?.isClosed == false) {
+      locationCallbackStream?.close();
+    }
+
+    locationCallbackStream = StreamController();
+    locationCallbackStream?.stream.listen(location);
+    return locationCallbackStream;
   }
 }
 

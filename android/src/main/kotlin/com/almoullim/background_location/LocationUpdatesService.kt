@@ -28,12 +28,18 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     private var forceLocationManager: Boolean = false
 
     override fun onBind(intent: Intent?): IBinder {
-        UPDATE_INTERVAL_IN_MILLISECONDS = intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS) ?: UPDATE_INTERVAL_IN_MILLISECONDS
-        FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = intent?.getLongExtra("fastest_interval", UPDATE_INTERVAL_IN_MILLISECONDS / 2) ?: UPDATE_INTERVAL_IN_MILLISECONDS / 2
+        UPDATE_INTERVAL_IN_MILLISECONDS =
+            intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS)
+                ?: UPDATE_INTERVAL_IN_MILLISECONDS
+        FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            intent?.getLongExtra("fastest_interval", UPDATE_INTERVAL_IN_MILLISECONDS / 2)
+                ?: UPDATE_INTERVAL_IN_MILLISECONDS / 2
 
         val priority = intent?.getIntExtra("priority", 0) ?: 0
         val distanceFilter = intent?.getDoubleExtra("distance_filter", 0.0) ?: 0.0
-        forceLocationManager = intent?.getBooleanExtra("force_location_manager", forceLocationManager) ?: forceLocationManager
+        forceLocationManager =
+            intent?.getBooleanExtra("force_location_manager", forceLocationManager)
+                ?: forceLocationManager
 
         createLocationRequest(priority, distanceFilter)
         return mBinder
@@ -74,12 +80,17 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         val ACTION_NOTIFICATION_ACTIONED = "ACTION_NOTIFICATION_ACTIONED"
         val ACTION_ON_BOOT = "ACTION_ON_BOOT"
 
-        private const val PACKAGE_NAME = "com.google.android.gms.location.sample.locationupdatesforegroundservice"
+        private const val PACKAGE_NAME =
+            "com.google.android.gms.location.sample.locationupdatesforegroundservice"
         private val TAG = LocationUpdatesService::class.java.simpleName
         internal val ACTION_SERVICE_REQUEST = "service_requests_action"
         internal const val ACTION_BROADCAST = "$PACKAGE_NAME.broadcast"
+        internal const val ACTION_BROADCAST_TYPE = "$PACKAGE_NAME.broadcast_type"
+        internal const val ACTION_BROADCAST_LOCATION = "ACTION_BROADCAST_LOCATION"
         internal const val EXTRA_LOCATION = "$PACKAGE_NAME.location"
-        private const val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
+        internal const val EXTRA_ACTION_CALLBACK = "$PACKAGE_NAME.action_callback"
+        private const val EXTRA_STARTED_FROM_NOTIFICATION =
+            "$PACKAGE_NAME.started_from_notification"
 
         var UPDATE_INTERVAL_IN_MILLISECONDS: Long = 1000
         var FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
@@ -118,21 +129,23 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
             intent.action = "Localisation"
             //intent.setClass(this, getMainActivityClass(this))
-            val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                1,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
 
             val builder = NotificationCompat.Builder(this, "BackgroundLocation")
-                .setContentTitle(NOTIFICATION_TITLE)
-                .setOngoing(true)
-                .setSound(null)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setWhen(System.currentTimeMillis())
+                .setContentTitle(NOTIFICATION_TITLE).setOngoing(true).setSound(null)
+                .setPriority(NotificationCompat.PRIORITY_HIGH).setWhen(System.currentTimeMillis())
                 .setStyle(NotificationCompat.BigTextStyle().bigText(NOTIFICATION_MESSAGE))
                 .setContentIntent(pendingIntent)
 
             try {
                 var resourceId: Int = 0
-                if (NOTIFICATION_ICON.startsWith("@mipmap"))
-                    resourceId = resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName)
+                if (NOTIFICATION_ICON.startsWith("@mipmap")) resourceId =
+                    resources.getIdentifier(NOTIFICATION_ICON, "mipmap", packageName)
                 if (NOTIFICATION_ICON.startsWith("@drawable")) {
                     resourceId = getDrawableResourceId(this, NOTIFICATION_ICON)
                 }
@@ -141,12 +154,27 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
                     ContextCompat.getDrawable(this, resourceId)
                     builder.setSmallIcon(resourceId)
                 } else {
-                    Log.w(TAG, "Provided resource resolved to $resourceId ${getPackageName()} - $NOTIFICATION_ICON")
-                    builder.setSmallIcon(resources.getIdentifier("@mipmap/ic_launcher", "mipmap", packageName))
+                    Log.w(
+                        TAG,
+                        "Provided resource resolved to $resourceId ${getPackageName()} - $NOTIFICATION_ICON"
+                    )
+                    builder.setSmallIcon(
+                        resources.getIdentifier(
+                            "@mipmap/ic_launcher",
+                            "mipmap",
+                            packageName
+                        )
+                    )
                 }
             } catch (tr: Throwable) {
                 Log.w(TAG, "Unable to set small notification icon", tr)
-                builder.setSmallIcon(resources.getIdentifier("@mipmap/ic_launcher", "mipmap", packageName))
+                builder.setSmallIcon(
+                    resources.getIdentifier(
+                        "@mipmap/ic_launcher",
+                        "mipmap",
+                        packageName
+                    )
+                )
             }
 
             if (NOTIFICATION_ACTION?.isNotEmpty() == true && NOTIFICATION_ACTION_CALLBACK != null) {
@@ -188,7 +216,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
     private var mServiceHandler: Handler? = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.i("LocationUpdatesService","onStartCommand - ${intent?.getAction()}")
         if (intent == null) {
             return super.onStartCommand(intent, flags, startId)
         }
@@ -201,30 +228,52 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             ACTION_NOTIFICATION_ACTIONED -> onNotificationActionClick(intent)
             ACTION_ON_BOOT -> {
                 Log.i("LocationService", "Starting from boot")
-                intent.putExtra("interval", pref.getLong("interval", UPDATE_INTERVAL_IN_MILLISECONDS))
-                intent.putExtra("fastest_interval", pref.getLong("fastestInterval", FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS))
+                intent.putExtra(
+                    "interval",
+                    pref.getLong("interval", UPDATE_INTERVAL_IN_MILLISECONDS)
+                )
+                intent.putExtra(
+                    "fastest_interval",
+                    pref.getLong("fastestInterval", FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
+                )
                 intent.putExtra("priority", pref.getInt("priority", 0))
-                intent.putExtra("distance_filter", pref.getFloat("distanceFilter", 300.toFloat()).toDouble())
+                intent.putExtra(
+                    "distance_filter",
+                    pref.getFloat("distanceFilter", 300.toFloat()).toDouble()
+                )
                 intent.putExtra("locationCallback", pref.getLong("locationCallback", 0L))
                 intent.putExtra("callbackHandle", pref.getLong("callbackHandle", 0L))
 
-                NOTIFICATION_CHANNEL_ID = pref.getString("NOTIFICATION_CHANNEL_ID", NOTIFICATION_CHANNEL_ID) ?: NOTIFICATION_CHANNEL_ID
-                NOTIFICATION_TITLE = pref.getString("NOTIFICATION_TITLE", NOTIFICATION_TITLE) ?: NOTIFICATION_TITLE
-                NOTIFICATION_MESSAGE = pref.getString("NOTIFICATION_MESSAGE", NOTIFICATION_MESSAGE) ?: NOTIFICATION_MESSAGE
-                NOTIFICATION_ICON = pref.getString("NOTIFICATION_ICON", NOTIFICATION_ICON) ?: NOTIFICATION_ICON
-                NOTIFICATION_ACTION = pref.getString("NOTIFICATION_ACTION", NOTIFICATION_ACTION ?: "")
-                NOTIFICATION_ACTION_CALLBACK = pref.getLong("NOTIFICATION_ACTION_CALLBACK", NOTIFICATION_ACTION_CALLBACK ?: 0L)
+                NOTIFICATION_CHANNEL_ID =
+                    pref.getString("NOTIFICATION_CHANNEL_ID", NOTIFICATION_CHANNEL_ID)
+                        ?: NOTIFICATION_CHANNEL_ID
+                NOTIFICATION_TITLE =
+                    pref.getString("NOTIFICATION_TITLE", NOTIFICATION_TITLE) ?: NOTIFICATION_TITLE
+                NOTIFICATION_MESSAGE = pref.getString("NOTIFICATION_MESSAGE", NOTIFICATION_MESSAGE)
+                    ?: NOTIFICATION_MESSAGE
+                NOTIFICATION_ICON =
+                    pref.getString("NOTIFICATION_ICON", NOTIFICATION_ICON) ?: NOTIFICATION_ICON
+                NOTIFICATION_ACTION =
+                    pref.getString("NOTIFICATION_ACTION", NOTIFICATION_ACTION ?: "")
+                NOTIFICATION_ACTION_CALLBACK =
+                    pref.getLong("NOTIFICATION_ACTION_CALLBACK", NOTIFICATION_ACTION_CALLBACK ?: 0L)
                 triggerForegroundServiceStart(intent)
             }
+
             else -> {
             }
         }
         return START_STICKY
     }
+
     fun triggerForegroundServiceStart(intent: Intent) {
         FlutterInjector.instance().flutterLoader().ensureInitializationComplete(this, null)
-        UPDATE_INTERVAL_IN_MILLISECONDS = intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS) ?: UPDATE_INTERVAL_IN_MILLISECONDS
-        FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = intent?.getLongExtra("fastest_interval", UPDATE_INTERVAL_IN_MILLISECONDS / 2) ?: UPDATE_INTERVAL_IN_MILLISECONDS / 2
+        UPDATE_INTERVAL_IN_MILLISECONDS =
+            intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS)
+                ?: UPDATE_INTERVAL_IN_MILLISECONDS
+        FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            intent?.getLongExtra("fastest_interval", UPDATE_INTERVAL_IN_MILLISECONDS / 2)
+                ?: UPDATE_INTERVAL_IN_MILLISECONDS / 2
 
         val startOnBoot = intent.getBooleanExtra("startOnBoot", false)
         val priority = intent.getIntExtra("priority", 0) ?: 0
@@ -272,12 +321,13 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         edit.putLong("NOTIFICATION_ACTION_CALLBACK", NOTIFICATION_ACTION_CALLBACK ?: 0L)
         edit.commit()
 
-        val googleAPIAvailability = GoogleApiAvailability.getInstance()
-            .isGooglePlayServicesAvailable(applicationContext)
+        val googleAPIAvailability =
+            GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(applicationContext)
 
         isGoogleApiAvailable = googleAPIAvailability == ConnectionResult.SUCCESS
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(actionReceiver, IntentFilter("${packageName}.service_requests"))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(actionReceiver, IntentFilter("${packageName}.service_requests"))
 
         if (isGoogleApiAvailable && !this.forceLocationManager) {
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -297,7 +347,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
             mLocationManagerCallback = LocationListener { location ->
-                println(location.toString())
                 onNewLocation(location)
             }
         }
@@ -310,7 +359,11 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val mChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT)
+            val mChannel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             mChannel.setSound(null, null)
             mNotificationManager!!.createNotificationChannel(mChannel)
         }
@@ -320,15 +373,20 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         updateNotification() // to start the foreground service
     }
 
-
     fun requestLocationUpdates() {
         Utils.setRequestingLocationUpdates(this, true)
         try {
             if (isGoogleApiAvailable && !this.forceLocationManager) {
-                mFusedLocationClient!!.requestLocationUpdates(mLocationRequest!!,
-                    mFusedLocationCallback!!, Looper.myLooper())
+                mFusedLocationClient!!.requestLocationUpdates(
+                    mLocationRequest!!, mFusedLocationCallback!!, Looper.myLooper()
+                )
             } else {
-                mLocationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, mLocationManagerCallback!!)
+                mLocationManager?.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0L,
+                    0f,
+                    mLocationManagerCallback!!
+                )
             }
         } catch (unlikely: SecurityException) {
             Utils.setRequestingLocationUpdates(this, false)
@@ -340,7 +398,8 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             isStarted = true
             startForeground(NOTIFICATION_ID, notification.build())
         } else {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(NOTIFICATION_ID, notification.build())
         }
     }
@@ -366,16 +425,14 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         stopSelf()
     }
 
-
     private fun getLastLocation() {
         try {
-            if(isGoogleApiAvailable && !this.forceLocationManager) {
-                mFusedLocationClient!!.lastLocation
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful && task.result != null) {
-                                onNewLocation(task.result)
-                            }
+            if (isGoogleApiAvailable && !this.forceLocationManager) {
+                mFusedLocationClient!!.lastLocation.addOnCompleteListener { task ->
+                        if (task.isSuccessful && task.result != null) {
+                            onNewLocation(task.result)
                         }
+                    }
             } else {
                 mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             }
@@ -386,6 +443,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     private fun onNewLocation(location: Location, locations: List<Location> = ArrayList()) {
         mLocation = location
         val intent = Intent(ACTION_BROADCAST)
+        intent.putExtra(ACTION_BROADCAST_TYPE, ACTION_BROADCAST_LOCATION)
         intent.putExtra(EXTRA_LOCATION, location)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
@@ -413,16 +471,14 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             locationsMap.add(locMap)
         }
 
-        val result: HashMap<Any, Any> =
-            hashMapOf(
-                "ARG_LOCATIONS" to locationsMap,
-                "ARG_LOCATION" to locationMap,
-                "ARG_CALLBACK" to mLocationCallbackHandle
-            )
+        val result: HashMap<Any, Any> = hashMapOf(
+            "ARG_LOCATIONS" to locationsMap,
+            "ARG_LOCATION" to locationMap,
+            "ARG_CALLBACK" to mLocationCallbackHandle
+        )
 
         Looper.getMainLooper()?.let {
-            Handler(it)
-                .post {
+            Handler(it).post {
                     backgroundChannel?.invokeMethod("BCM_LOCATION", result)
                 }
         }
@@ -446,15 +502,18 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             locationMap["is_mock"] = location.isFromMockProvider
         }
 
-        val result: HashMap<Any, Any> =
-            hashMapOf(
-                "ARG_LOCATION" to locationMap,
-                "ARG_CALLBACK" to callback
-            )
+        val result: HashMap<Any, Any> = hashMapOf(
+            "ARG_LOCATION" to locationMap, "ARG_CALLBACK" to callback
+        )
+
+        val intent = Intent(ACTION_BROADCAST)
+        intent.putExtra(ACTION_BROADCAST_TYPE, ACTION_NOTIFICATION_ACTIONED)
+        intent.putExtra(EXTRA_LOCATION, location)
+        intent.putExtra(EXTRA_ACTION_CALLBACK, callback)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
         Looper.getMainLooper()?.let {
-            Handler(it)
-                .post {
+            Handler(it).post {
                     backgroundChannel?.invokeMethod("BCM_NOTIFICATION_ACTION", result)
                 }
         }
@@ -469,14 +528,11 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         mLocationRequest = LocationRequest()
         mLocationRequest!!.interval = UPDATE_INTERVAL_IN_MILLISECONDS
         mLocationRequest!!.fastestInterval = FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS
-        if (priority == 0)
-            mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        if (priority == 1)
-            mLocationRequest!!.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        if (priority == 2)
-            mLocationRequest!!.priority = LocationRequest.PRIORITY_LOW_POWER
-        if (priority == 3)
-            mLocationRequest!!.priority = LocationRequest.PRIORITY_NO_POWER
+        if (priority == 0) mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        if (priority == 1) mLocationRequest!!.priority =
+            LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        if (priority == 2) mLocationRequest!!.priority = LocationRequest.PRIORITY_LOW_POWER
+        if (priority == 3) mLocationRequest!!.priority = LocationRequest.PRIORITY_NO_POWER
         mLocationRequest!!.smallestDisplacement = distanceFilter.toFloat()
         mLocationRequest?.maxWaitTime = UPDATE_INTERVAL_IN_MILLISECONDS
     }
@@ -524,6 +580,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             "BackgroundLocationService.initialized" -> {
                 result.success(0);
             }
+
             else -> {
                 result.success(null)
             }
