@@ -176,8 +176,10 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         if (title != null) LocationUpdatesService.NOTIFICATION_TITLE = title
         if (message != null) LocationUpdatesService.NOTIFICATION_MESSAGE = message
         if (icon != null) LocationUpdatesService.NOTIFICATION_ICON = icon
-        if (actionText != null) LocationUpdatesService.NOTIFICATION_ACTION = actionText
-        LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
+        if (actionText != null) {
+            LocationUpdatesService.NOTIFICATION_ACTION = actionText
+            LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
+        }
 
         if (service != null) {
             service?.updateNotification()
