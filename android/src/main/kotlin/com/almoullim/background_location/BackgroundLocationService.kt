@@ -9,13 +9,13 @@ import android.app.ActivityManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
@@ -202,6 +202,11 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         when (call.method) {
             "stop_location_service" -> result.success(stopLocationService())
             "start_location_service" -> {
+                if (!checkPermissions()) {
+                    requestPermissions()
+                    return
+                }
+
                 var locationCallback: Long? = 0L
                 try {
                     locationCallback = call.argument("locationCallback")
@@ -277,7 +282,20 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Checks the current permission for `ACCESS_FINE_LOCATION`
      */
     private fun checkPermissions(): Boolean {
-        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) && PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.FOREGROUND_SERVICE_LOCATION
+            )
+        } else {
+            return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
     }
 
 
@@ -298,7 +316,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         } else {
             Log.i(BackgroundLocationPlugin.TAG, "Requesting permission")
             ActivityCompat.requestPermissions(activity!!,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS),
+                    arrayOf(Manifest.permission.FOREGROUND_SERVICE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS),
                     REQUEST_PERMISSIONS_REQUEST_CODE)
         }
     }
