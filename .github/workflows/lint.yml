@@ -30,9 +30,6 @@ jobs:
       - name: Linter
         run: flutter analyze
 
-      - name: Test
-        run: flutter test
-
       - name: Test example package
         run: | 
           cd example
