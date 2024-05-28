@@ -8,9 +8,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: read # Required for authentication using OIDC
-      contents: read
     defaults:
       run:
         working-directory: ./
