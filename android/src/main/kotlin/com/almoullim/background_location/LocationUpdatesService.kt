@@ -23,6 +23,7 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
+import com.almoullim.background_location.Utils
 
 class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 

@@ -7,8 +7,8 @@ homepage: https://github.com/Almoullim/background_location
 repository: https://github.com/Almoullim/background_location
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
-  flutter: ">=3.0.0"
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:

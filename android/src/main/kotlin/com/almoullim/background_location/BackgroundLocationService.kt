@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import com.almoullim.background_location.BackgroundLocationPlugin
+import com.almoullim.background_location.Utils
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry
@@ -25,7 +27,7 @@ import io.flutter.plugin.common.PluginRegistry
 
 class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
     companion object {
-        const val METHOD_CHANNEL_NAME = "${BackgroundLocationPlugin.PLUGIN_ID}/methods"
+        val METHOD_CHANNEL_NAME = "${BackgroundLocationPlugin.PLUGIN_ID}/methods"
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
         private var instance: BackgroundLocationService? = null
