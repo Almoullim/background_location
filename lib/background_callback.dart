@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:background_location/background_location.dart';

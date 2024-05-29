@@ -1,0 +1,36 @@
+name: Lint + Test
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+      
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Install Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: Install packages
+        run: flutter pub get
+
+      - name: Linter
+        run: flutter analyze
+
+      - name: Test example package
+        run: | 
+          cd example
+          flutter test

@@ -47,7 +47,7 @@ class BackgroundLocation {
   static OptLocationCallback? notificationActionCallback;
 
   /// Stop receiving location updates
-  static Future stopLocationService() async {
+  static Future<dynamic> stopLocationService() async {
     return await _channel.invokeMethod('stop_location_service');
   }
 
@@ -58,7 +58,7 @@ class BackgroundLocation {
   }
 
   /// Start receiving location updated
-  static Future startLocationService({
+  static Future<dynamic> startLocationService({
     bool startOnBoot = false,
     int interval = 1000,
     int fastestInterval = 500,
@@ -94,7 +94,7 @@ class BackgroundLocation {
   }
 
 
-  static Future setAndroidNotification({
+  static Future<dynamic> setAndroidNotification({
     String? channelID,
     String? title,
     String? message,
@@ -126,14 +126,11 @@ class BackgroundLocation {
     }
   }
 
-
-  static Future setAndroidConfiguration(int interval) async {
+  static Future<dynamic> setAndroidConfiguration(int interval) async {
     if (Platform.isAndroid) {
       return await _channel.invokeMethod('set_configuration', <String, dynamic>{
         'interval': interval.toString(),
       });
-    } else {
-      //return Promise.resolve();
     }
   }
 
