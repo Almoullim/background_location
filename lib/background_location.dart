@@ -112,15 +112,24 @@ class BackgroundLocation {
           log('Error getting callback handle', error: ex, stackTrace: stack);
         }
       }
-      return await _channel.invokeMethod('set_android_notification',
-          <String, dynamic>{
-            'channelID': channelID,
-            'title': title,
-            'message': message,
-            'icon': icon,
-            'actionText': actionText,
-            'actionCallback': callback,
-          });
+
+      var data = <String, dynamic>{
+        'channelID': channelID,
+        'title': title,
+        'message': message,
+        'icon': icon,
+        'actionText': actionText,
+        'actionCallback': callback,
+      };
+
+      try {
+        return await _channel.invokeMethod('set_android_notification', data);
+      } catch (ex, stack) {
+        log('Error setting notification', error: ex, stackTrace: stack);
+
+        return await const MethodChannel(backgroundChannelID).invokeMethod('set_android_notification', data);
+      }
+
     } else {
       //return Promise.resolve();
     }

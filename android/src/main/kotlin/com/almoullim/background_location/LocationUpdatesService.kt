@@ -1,29 +1,28 @@
 package com.almoullim.background_location
 
-import android.annotation.SuppressLint
 import android.app.*
-import android.location.*
-import android.location.LocationListener
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
+import android.location.*
+import android.location.LocationListener
 import android.os.*
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.common.*
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.common.*
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
-import com.almoullim.background_location.Utils
 
 class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
@@ -55,7 +54,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     private var mFusedLocationCallback: LocationCallback? = null
     private var mLocationManagerCallback: LocationListener? = null
     private var mLocationCallbackHandle: Long = 0L
-    private var mLocationCallback: LocationCallback? = null
     private var mLocation: Location? = null
     private var backgroundEngine: FlutterEngine? = null
     private var isGoogleApiAvailable: Boolean = false
@@ -204,7 +202,6 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
     private inner class ActionRequestReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent == null) return;
             val action: String? = intent.getStringExtra(ACTION_SERVICE_REQUEST)
             when (action) {
                 ACTION_STOP_FOREGROUND_SERVICE -> triggerForegroundServiceStop()
@@ -218,18 +215,17 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
     private var mServiceHandler: Handler? = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent == null) {
-            return super.onStartCommand(intent, flags, startId)
-        }
+        super.onStartCommand(intent, flags, startId)
+        Log.i("LocationService", "onStartCommand ${intent?.action}")
 
-        val action: String? = intent.getAction()
+        val action: String? = intent?.action
         when (action) {
             ACTION_START_FOREGROUND_SERVICE -> triggerForegroundServiceStart(intent)
             ACTION_STOP_FOREGROUND_SERVICE -> triggerForegroundServiceStop()
             ACTION_UPDATE_NOTIFICATION -> updateNotification()
             ACTION_NOTIFICATION_ACTIONED -> onNotificationActionClick(intent)
             ACTION_ON_BOOT -> {
-                Log.i("LocationService", "Starting from boot")
+                Log.i("LocationService", "Starting from boot: ${pref.getLong("callbackHandle", 0L)}")
                 intent.putExtra(
                     "interval",
                     pref.getLong("interval", UPDATE_INTERVAL_IN_MILLISECONDS)
@@ -285,6 +281,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
         val callbackHandle = intent.getLongExtra("callbackHandle", 0L) ?: 0L
         if (callbackHandle != 0L && backgroundEngine == null) {
+            Log.i("LocationService", "creating background engine $callbackHandle")
             val callbackInfo = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle)
 
             // We need flutter engine to handle callback, so if it is not available we have to create a
@@ -297,6 +294,8 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
                 callbackInfo
             )
             backgroundEngine?.dartExecutor?.executeDartCallback(args)
+        } else  {
+            Log.i("LocationService", "Skipping background engine $callbackHandle - $backgroundEngine")
         }
         if (backgroundEngine != null && backgroundEngine?.dartExecutor != null) {
             backgroundChannel = MethodChannel(
@@ -370,7 +369,12 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             mNotificationManager!!.createNotificationChannel(mChannel)
         }
 
-        startForeground(NOTIFICATION_ID, notification.build())
+        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification.build(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            } else {
+                0
+            })
 
         updateNotification() // to start the foreground service
     }
@@ -412,6 +416,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     }
 
     fun triggerForegroundServiceStop() {
+        Log.i("LocationService", "triggerForegroundServiceStop")
         val edit = pref.edit()
         edit.putBoolean("locationActive", false)
         edit.remove("interval")
@@ -587,7 +592,31 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
             "BackgroundLocationService.initialized" -> {
                 result.success(0);
             }
+            "set_android_notification" -> {
+                val channelID: String? = call.argument("channelID")
+                val notificationTitle: String? = call.argument("title")
+                val notificationMessage: String? = call.argument("message")
+                val notificationIcon: String? = call.argument("icon")
+                val actionText: String? = call.argument("actionText")
+                var callback: Long = 0L
+                try {
+                    callback = call.argument("actionCallback") ?: 0L
+                } catch (ex: Throwable) {
+                }
 
+                if (channelID != null) LocationUpdatesService.NOTIFICATION_CHANNEL_ID = channelID
+                if (notificationTitle != null) LocationUpdatesService.NOTIFICATION_TITLE = notificationTitle
+                if (notificationMessage != null) LocationUpdatesService.NOTIFICATION_MESSAGE = notificationMessage
+                if (notificationIcon != null) LocationUpdatesService.NOTIFICATION_ICON = notificationIcon
+                if (actionText != null) {
+                    LocationUpdatesService.NOTIFICATION_ACTION = actionText
+                    LocationUpdatesService.NOTIFICATION_ACTION_CALLBACK = callback
+                }
+
+                updateNotification()
+
+                result.success(null)
+            }
             else -> {
                 result.success(null)
             }

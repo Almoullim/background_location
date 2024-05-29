@@ -1,9 +1,6 @@
 package com.almoullim.background_location
 
 import android.Manifest
-import io.flutter.plugin.common.MethodChannel
-
-import io.flutter.plugin.common.BinaryMessenger
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.*
@@ -14,18 +11,17 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import com.almoullim.background_location.BackgroundLocationPlugin
-import com.almoullim.background_location.Utils
-
+import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 
-
-class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+class BackgroundLocationService : MethodChannel.MethodCallHandler,
+    PluginRegistry.RequestPermissionsResultListener {
     companion object {
         val METHOD_CHANNEL_NAME = "${BackgroundLocationPlugin.PLUGIN_ID}/methods"
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
@@ -82,8 +78,9 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
 
         receiver = MyReceiver()
 
-        LocalBroadcastManager.getInstance(context).registerReceiver(receiver!!,
-                IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
+        LocalBroadcastManager.getInstance(context).registerReceiver(
+            receiver!!, IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+        )
     }
 
     fun onDetachedFromEngine() {
@@ -95,14 +92,12 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
     fun setActivity(binding: ActivityPluginBinding?) {
         this.activity = binding?.activity
 
-        if(this.activity != null){
+        if (this.activity != null) {
             if (Utils.requestingLocationUpdates(context!!)) {
                 if (!checkPermissions()) {
                     requestPermissions()
                 }
             }
-        } else {
-            stopLocationService()
         }
     }
 
@@ -112,13 +107,13 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         fastestInterval: Int?,
         priority: Int?,
         distanceFilter: Double?,
-        forceLocationManager : Boolean?,
+        forceLocationManager: Boolean?,
         callbackHandle: Long?,
         locationCallback: Long?,
-    ): Int{
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(receiver!!,
-                IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
-        if (!bound) {
+    ): Int {
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(
+            receiver!!, IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+        )
             val intent = Intent(context, LocationUpdatesService::class.java)
             intent.setAction(LocationUpdatesService.ACTION_START_FOREGROUND_SERVICE)
             intent.putExtra("startOnBoot", startOnBoot)
@@ -133,19 +128,15 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
             ContextCompat.startForegroundService(context!!, intent)
             context!!.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
 
-        }
-
         return 0
     }
 
     private fun isLocationServiceRunning(): Boolean {
-        val manager: ActivityManager = context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val manager: ActivityManager =
+            context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (LocationUpdatesService::class.java.getName() == service.service.getClassName()) {
-                if (service.foreground)
-                    return true
-                else
-                    return false
+            if (LocationUpdatesService::class.java.getName() == service.service.className) {
+                return service.foreground
             }
         }
         return false
@@ -156,7 +147,10 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
 
         val intent = Intent(context!!, LocationUpdatesService::class.java)
         intent.setAction("${context!!.packageName}.service_requests")
-        intent.putExtra(LocationUpdatesService.ACTION_SERVICE_REQUEST, LocationUpdatesService.ACTION_STOP_FOREGROUND_SERVICE)
+        intent.putExtra(
+            LocationUpdatesService.ACTION_SERVICE_REQUEST,
+            LocationUpdatesService.ACTION_STOP_FOREGROUND_SERVICE
+        )
         LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
 
         if (bound) {
@@ -174,7 +168,7 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         icon: String?,
         actionText: String?,
         callback: Long,
-    ):Int{
+    ): Int {
         if (channelID != null) LocationUpdatesService.NOTIFICATION_CHANNEL_ID = channelID
         if (title != null) LocationUpdatesService.NOTIFICATION_TITLE = title
         if (message != null) LocationUpdatesService.NOTIFICATION_MESSAGE = message
@@ -191,10 +185,10 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         return 0
     }
 
-    private fun setConfiguration(timeInterval: Long?):Int {
+    private fun setConfiguration(timeInterval: Long?): Int {
         if (timeInterval != null) {
             LocationUpdatesService.UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval
-            LocationUpdatesService.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval/2
+            LocationUpdatesService.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = timeInterval / 2
         }
 
         return 0
@@ -221,31 +215,34 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                 } catch (ex: Throwable) {
                 }
 
-                val startOnBoot: Boolean? = call.argument("startOnBoot") ?: false
+                val startOnBoot: Boolean = call.argument("startOnBoot") ?: false
                 val interval: Int? = call.argument("interval")
                 val fastestInterval: Int? = call.argument("fastest_interval")
                 val priority: Int? = call.argument("priority")
                 val distanceFilter: Double? = call.argument("distance_filter")
                 val forceLocationManager: Boolean? = call.argument("force_location_manager")
 
-                result.success(startLocationService(
-                    startOnBoot,
-                    interval,
-                    fastestInterval,
-                    priority,
-                    distanceFilter,
-                    forceLocationManager,
-                    callbackHandle,
-                    locationCallback,
-                ))
+                result.success(
+                    startLocationService(
+                        startOnBoot,
+                        interval,
+                        fastestInterval,
+                        priority,
+                        distanceFilter,
+                        forceLocationManager,
+                        callbackHandle,
+                        locationCallback,
+                    )
+                )
             }
+
             "is_service_running" -> result.success(isLocationServiceRunning())
             "set_android_notification" -> {
-                val channelID: String? = call.argument("channelID");
-                val notificationTitle: String? = call.argument("title");
-                val notificationMessage: String? = call.argument("message");
-                val notificationIcon: String? = call.argument("icon");
-                val actionText: String? = call.argument("actionText");
+                val channelID: String? = call.argument("channelID")
+                val notificationTitle: String? = call.argument("title")
+                val notificationMessage: String? = call.argument("message")
+                val notificationIcon: String? = call.argument("icon")
+                val actionText: String? = call.argument("actionText")
                 var callback: Long = 0L
                 try {
                     callback = call.argument("actionCallback") ?: 0L
@@ -263,7 +260,13 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
                     )
                 )
             }
-            "set_configuration" -> result.success(setConfiguration(call.argument<String>("interval")?.toLongOrNull()))
+
+            "set_configuration" -> result.success(
+                setConfiguration(
+                    call.argument<String>("interval")?.toLongOrNull()
+                )
+            )
+
             else -> result.notImplemented()
         }
     }
@@ -284,18 +287,27 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Checks the current permission for `ACCESS_FINE_LOCATION`
      */
     private fun checkPermissions(): Boolean {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
+        Log.i(BackgroundLocationPlugin.TAG, "Check permission")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Log.i(BackgroundLocationPlugin.TAG, "Check permission > Tiramisu")
+            var allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                context!!, Manifest.permission.ACCESS_FINE_LOCATION
             ) && PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.FOREGROUND_SERVICE_LOCATION
+                context!!, Manifest.permission.FOREGROUND_SERVICE_LOCATION
             )
+
+            if (allowed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                Log.i(BackgroundLocationPlugin.TAG, "Check permission > Upside down cake")
+                allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                    context!!, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                )
+            }
+
+            return allowed
         } else {
             return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                context!!, Manifest.permission.ACCESS_FINE_LOCATION
             )
         }
     }
@@ -306,20 +318,62 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Depending on the current activity, displays a rationale for the request.
      */
     private fun requestPermissions() {
-        if(activity == null) {
+        if (activity == null) {
             return
         }
 
-        val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
+        val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+            activity!!,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
         if (shouldProvideRationale) {
-            Log.i(BackgroundLocationPlugin.TAG, "Displaying permission rationale to provide additional context.")
+            Log.i(
+                BackgroundLocationPlugin.TAG,
+                "Displaying permission rationale to provide additional context."
+            )
             Toast.makeText(context, R.string.permission_rationale, Toast.LENGTH_LONG).show()
 
         } else {
             Log.i(BackgroundLocationPlugin.TAG, "Requesting permission")
-            ActivityCompat.requestPermissions(activity!!,
-                    arrayOf(Manifest.permission.FOREGROUND_SERVICE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS),
-                    REQUEST_PERMISSIONS_REQUEST_CODE)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ActivityCompat.requestPermissions(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.FOREGROUND_SERVICE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ),
+                    REQUEST_PERMISSIONS_REQUEST_CODE
+                )
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ),
+                    REQUEST_PERMISSIONS_REQUEST_CODE
+                )
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ActivityCompat.requestPermissions(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ),
+                    REQUEST_PERMISSIONS_REQUEST_CODE
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ),
+                    REQUEST_PERMISSIONS_REQUEST_CODE
+                )
+            }
         }
     }
 
@@ -327,7 +381,8 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
         override fun onReceive(context: Context, intent: Intent) {
             val actionType = intent.getStringExtra(LocationUpdatesService.ACTION_BROADCAST_TYPE)
 
-            val location = intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
+            val location =
+                intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
             val locationMap = HashMap<String, Any>()
             if (location != null) {
                 locationMap["latitude"] = location.latitude
@@ -341,11 +396,17 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
             }
 
             when (actionType) {
-                LocationUpdatesService.ACTION_BROADCAST_LOCATION -> channel.invokeMethod("location", locationMap, null)
+                LocationUpdatesService.ACTION_BROADCAST_LOCATION -> channel.invokeMethod(
+                    "location",
+                    locationMap,
+                    null
+                )
+
                 LocationUpdatesService.ACTION_NOTIFICATION_ACTIONED -> {
                     val result = HashMap<String, Any>()
                     result["ARG_LOCATION"] = locationMap
-                    result["ARG_CALLBACK"] = intent.getLongExtra(LocationUpdatesService.EXTRA_ACTION_CALLBACK, 0L)
+                    result["ARG_CALLBACK"] =
+                        intent.getLongExtra(LocationUpdatesService.EXTRA_ACTION_CALLBACK, 0L)
                     channel.invokeMethod("notificationAction", result, null)
                 }
             }
@@ -356,13 +417,25 @@ class BackgroundLocationService: MethodChannel.MethodCallHandler, PluginRegistry
      * Handle the response from a permission request
      * @return true if the result has been handled.
      */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean{
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ): Boolean {
         Log.i(BackgroundLocationPlugin.TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             when {
-                grantResults!!.isEmpty() -> Log.i(BackgroundLocationPlugin.TAG, "User interaction was cancelled.")
+                grantResults.isEmpty() -> Log.i(
+                    BackgroundLocationPlugin.TAG,
+                    "User interaction was cancelled."
+                )
+
                 grantResults[0] == PackageManager.PERMISSION_GRANTED -> service?.requestLocationUpdates()
-                else -> Toast.makeText(context, R.string.permission_denied_explanation, Toast.LENGTH_LONG).show()
+                else -> Toast.makeText(
+                    context,
+                    R.string.permission_denied_explanation,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         return true

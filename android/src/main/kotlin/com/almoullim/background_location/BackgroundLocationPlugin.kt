@@ -6,7 +6,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.PluginRegistry
 
-
 class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
