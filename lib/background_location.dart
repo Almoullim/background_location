@@ -5,20 +5,20 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
-import 'background_callback.dart';
+import 'package:background_location/background_callback.dart';
 
 typedef LocationCallback = void Function(List<Location> value);
 typedef OptLocationCallback = void Function(Location? value);
 
 enum LocationPriority {
   /// The best level of accuracy available.
-  PRIORITY_HIGH_ACCURACY,
+  priorityHighAccuracy,
   // Accurate to within one hundred meters.
-  PRIORITY_BALANCED_POWER_ACCURACY,
+  priorityBalancedPowerAccuracy,
   // Accurate to within ten meters of the desired target.
-  PRIORITY_LOW_POWER,
+  priorityLowPower,
   // The level of accuracy used when an app isn’t authorized for full accuracy location data.
-  PRIORITY_NO_POWER,
+  priorityNoPower,
 }
 
 /// BackgroundLocation plugin to get background
@@ -26,16 +26,16 @@ enum LocationPriority {
 class BackgroundLocation {
   // The channel to be used for communication.
   // This channel is also referenced inside both iOS and Abdroid classes
-  static final MethodChannel _channel = MethodChannel('com.almoullim.background_location/methods')..setMethodCallHandler((MethodCall methodCall) async {
+  static final MethodChannel _channel = const MethodChannel('com.almoullim.background_location/methods')..setMethodCallHandler((MethodCall methodCall) async {
     switch(methodCall.method) {
       case 'location':
-        var locationData = Map.from(methodCall.arguments);
+        var locationData = methodCall.arguments as Map;
         locationCallbackStream?.add(Location.fromJson(locationData));
         break;
       case 'notificationAction':
         var callback = notificationActionCallback;
-        var response = Map.from(methodCall.arguments);
-        var location = response[ARG_LOCATION];
+        var response = methodCall.arguments as Map;
+        var location = response[argLocation] as Map;
         if (callback != null) {
           callback(Location.fromJson(location));
         }
@@ -64,7 +64,7 @@ class BackgroundLocation {
     int fastestInterval = 500,
     double distanceFilter = 0.0,
     bool forceAndroidLocationManager = false,
-    LocationPriority priority = LocationPriority.PRIORITY_HIGH_ACCURACY,
+    LocationPriority priority = LocationPriority.priorityHighAccuracy,
     LocationCallback? backgroundCallback,
   }) async {
     var callbackHandle = 0;
@@ -138,14 +138,14 @@ class BackgroundLocation {
   Future<Location> getCurrentLocation() async {
     var completer = Completer<Location>();
 
-    await getLocationUpdates(completer.complete);
+    getLocationUpdates(completer.complete);
 
     return completer.future;
   }
 
   /// Register a function to receive location updates as long as the location
   /// service has started
-  static StreamController<Location>? getLocationUpdates(Function(Location) location) {
+  static StreamController<Location>? getLocationUpdates(void Function(Location) location) {
     if (locationCallbackStream?.isClosed == false) {
       locationCallbackStream?.close();
     }
@@ -179,15 +179,15 @@ class Location {
   });
 
   factory Location.fromJson(Map<dynamic, dynamic> json) {
-    bool isLocationMocked = Platform.isAndroid ? json['is_mock'] : false;
+    bool isLocationMocked = Platform.isAndroid ? json['is_mock'] as bool : false;
     return Location(
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      altitude: json['altitude'],
-      bearing: json['bearing'],
-      accuracy: json['accuracy'],
-      speed: json['speed'],
-      time: json['time'],
+      latitude: json['latitude'] as double,
+      longitude: json['longitude'] as double,
+      altitude: json['altitude'] as double,
+      bearing: json['bearing'] as double,
+      accuracy: json['accuracy'] as double,
+      speed: json['speed'] as double,
+      time: json['time'] as double,
       isMock: isLocationMocked,
     );
   }

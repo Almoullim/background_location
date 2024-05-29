@@ -7,7 +7,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  State createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -18,7 +18,7 @@ class _MyAppState extends State<MyApp> {
   String bearing = 'waiting...';
   String speed = 'waiting...';
   String time = 'waiting...';
-  bool? serviceRunning = null;
+  bool? serviceRunning;
 
   @override
   void initState() {
@@ -35,14 +35,14 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ListView(
             children: <Widget>[
-              locationData('Latitude: ' + latitude),
-              locationData('Longitude: ' + longitude),
-              locationData('Altitude: ' + altitude),
-              locationData('Accuracy: ' + accuracy),
-              locationData('Bearing: ' + bearing),
-              locationData('Speed: ' + speed),
-              locationData('Time: ' + time),
-              locationData('IsServiceRunning: ' + serviceRunning.toString()),
+              locationData('Latitude: $latitude'),
+              locationData('Longitude: $longitude'),
+              locationData('Altitude: $altitude'),
+              locationData('Accuracy: $accuracy'),
+              locationData('Bearing: $bearing'),
+              locationData('Speed: $speed'),
+              locationData('Time: $time'),
+              locationData('IsServiceRunning: $serviceRunning'),
               ElevatedButton(
                   onPressed: () async {
                     await BackgroundLocation.setAndroidNotification(
@@ -130,7 +130,7 @@ class _MyAppState extends State<MyApp> {
 
   void getCurrentLocation() {
     BackgroundLocation().getCurrentLocation().then((location) {
-      log('This is current Location ' + location.toMap().toString());
+      log('This is current Location ${location.toMap()}');
     });
   }
 
