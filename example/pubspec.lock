@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "2.11.0"
   background_location:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
@@ -52,10 +52,10 @@ packages:
     dependency: "direct main"
     description:
       name: cupertino_icons
-      sha256: caac504f942f41dfadcf45229ce8c47065b93919a12739f20d6173a883c5ec73
+      sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.8"
   fake_async:
     dependency: transitive
     description:
@@ -201,4 +201,4 @@ packages:
     version: "14.2.1"
 sdks:
   dart: ">=3.3.0 <4.0.0"
-  flutter: ">=3.18.0-18.0.pre.54"
+  flutter: ">=3.22.0"

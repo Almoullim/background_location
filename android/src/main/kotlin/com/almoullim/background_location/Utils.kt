@@ -16,7 +16,6 @@
 
 package com.almoullim.background_location
 
-
 import android.content.Context
 
 internal object Utils {

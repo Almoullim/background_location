@@ -1,2 +1,89 @@
-include: package:pedantic/analysis_options.1.9.0.yaml
+include: package:flutter_lints/flutter.yaml
+
 analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+linter:
+  rules:
+    use_build_context_synchronously: false # Do not use BuildContexts across async gaps.
+    avoid_empty_else: true  # AVOID empty else statements.
+    always_use_package_imports: true  # DO avoid relative imports for files in lib/.
+    avoid_types_as_parameter_names: true  # AVOID using a parameter name that is the same as an existing type.
+    control_flow_in_finally: true  # AVOID control flow leaving finally blocks(Using control flow in finally blocks will inevitably cause unexpected behavior that is hard to debug)
+    empty_statements: true  # AVOID empty statements(Empty statements almost always indicate a bug)
+    collection_methods_unrelated_type: true  # DON'T invoke contains on Collection with an instance of different type than the parameter type.
+    no_duplicate_case_values: true # DON'T use more than one case with same value.
+    prefer_void_to_null: true # DO NOT use the type Null where void would work.
+    unrelated_type_equality_checks: true # DON'T Compare references of unrelated types for equality.
+    valid_regexps: true # DON'T Compare references of unrelated types for equality.      always_require_non_null_named_parameters: true # DO specify @required on named parameters without a default value on which an assert(param != null) is done.
+    annotate_overrides: true # DO annotate overridden methods and fields.
+    avoid_function_literals_in_foreach_calls: true # AVOID using forEach with a function literal.
+    avoid_init_to_null: true # DON'T explicitly initialize variables to null.
+    avoid_null_checks_in_equality_operators: true # DON'T check for null in custom == operators.
+    avoid_renaming_method_parameters: true # DON'T rename parameters of overridden methods.
+    avoid_return_types_on_setters: true # AVOID return types on setters.
+    avoid_returning_null_for_void: true # AVOID returning null for void.
+    avoid_shadowing_type_parameters: true # AVOID shadowing type parameters.
+    avoid_single_cascade_in_expression_statements: true # AVOID single cascade in expression statements.
+    await_only_futures: true # AVOID using await on anything which is not a future.
+    camel_case_extensions: true # DO name extensions using UpperCamelCase.
+    constant_identifier_names: true # PREFER using lowerCamelCase for constant names.
+    curly_braces_in_flow_control_structures: true # DO use curly braces for all flow control structures.
+    empty_catches: true # AVOID empty catch blocks.
+    empty_constructor_bodies: true # DO use ; instead of {} for empty constructor bodies.
+    exhaustive_cases: true # Switching on instances of enum-like classes should be exhaustive.
+    file_names: true # DO name source files using lowercase_with_underscores.
+    implementation_imports: true # DON'T import implementation files from another package.
+    library_names: true # DO name libraries using lowercase_with_underscores.
+    library_prefixes: true # DO use lowercase_with_underscores when specifying a library prefix.
+    library_private_types_in_public_api: true  # AVOID using library private types in public APIs.
+    no_leading_underscores_for_library_prefixes: true  # DON’T use a leading underscore for library prefixes.
+    no_leading_underscores_for_local_identifiers: true  # DON’T use a leading underscore for identifiers that aren't private.
+    non_constant_identifier_names: true  # DO name non-constant identifiers using lowerCamelCase.
+    null_check_on_nullable_type_parameter: true # Don't use null check on a potentially nullable type parameter.
+    null_closures: true # DO NOT pass null as an argument where a closure is expected.
+    overridden_fields: true # DON'T override fields.
+    package_prefixed_library_names: true # DO prefix library names with the package name and a dot-separated path.
+    prefer_adjacent_string_concatenation: true # DO use adjacent strings to concatenate string literals.
+    prefer_collection_literals: true # DO use collection literals when possible.
+    prefer_conditional_assignment: true # PREFER using ??= over testing for null.
+    prefer_contains: true # DON'T use indexOf to see if a collection contains an element.
+    prefer_equal_for_default_values: true # DO Use = to separate a named parameter from its default value.
+    prefer_final_fields: true # DO prefer declaring private fields as final if they are not reassigned later in the library.
+    prefer_for_elements_to_map_fromIterable: true # When building maps from iterables, it is preferable to use 'for' elements.
+    prefer_function_declarations_over_variables: true # DO use a function declaration to bind a function to a name.
+    prefer_generic_function_type_aliases: true #  PREFER generic function type aliases.
+    prefer_if_null_operators: true # Prefer using if null operators instead of null checks in conditional expressions.
+    prefer_initializing_formals: true # DO use initializing formals when possible.
+    prefer_inlined_adds: true # Declare elements in list literals inline, rather than using add and addAll methods where possible.
+    prefer_interpolation_to_compose_strings: true # PREFER using interpolation to compose strings and values.
+    prefer_is_empty: true # DON'T use length to see if a collection is empty.
+    prefer_is_not_empty: true # PREFER x.isNotEmpty to !x.isEmpty for Iterable and Map instances.
+    prefer_is_not_operator: true # When checking if an object is not of a specified type, it is preferable to use the 'is!' operator.
+    prefer_iterable_whereType: true # PREFER iterable.whereType<T>() over iterable.where((e) => e is T).
+    prefer_null_aware_operators: true # Prefer using null aware operators instead of null checks in conditional expressions.
+    prefer_spread_collections: true # Use spread collections when possible.
+    prefer_typing_uninitialized_variables: true # PREFER specifying a type annotation for uninitialized variables and fields.
+    provide_deprecation_message: true # DO specify a deprecation message (with migration instructions and/or a removal schedule) in the Deprecation constructor.
+    recursive_getters: true # DON'T create recursive getters.
+    slash_for_doc_comments: true # PREFER using /// for doc comments.
+    type_init_formals: true # DON'T type annotate initializing formals.
+    unnecessary_brace_in_string_interps: true # AVOID using braces in interpolation when not needed.
+    unnecessary_const: true # AVOID repeating const keyword in a const context.
+    unnecessary_constructor_name: true # PREFER using the default unnamed Constructor over .new.
+    unnecessary_getters_setters: true # AVOID wrapping fields in getters and setters just to be "safe".
+    unnecessary_late: true # DO not specify the late modifier for top-level and static variables when the declaration contains an initializer.
+    unnecessary_new: true # AVOID new keyword to create instances.
+    unnecessary_null_aware_assignments: true # AVOID null in null-aware assignment.
+    unnecessary_null_in_if_null_operators: true # AVOID using null as an operand in if null operators.
+    unnecessary_nullable_for_final_variable_declarations: true # Use a non-nullable type for a final variable initialized with a non-nullable value.
+    unnecessary_overrides: true # DON'T override a method to do a super method invocation with same parameters.
+    unnecessary_string_escapes: true # Remove unnecessary backslashes in strings.
+    unnecessary_string_interpolations: true # Don't use string interpolation if there's only a string expression in it.
+    unnecessary_this: true # DON'T use this when not needed to avoid shadowing.
+    use_function_type_syntax_for_parameters: true # Use generic function type syntax for parameters.
+    use_rethrow_when_possible: true # DO use rethrow to rethrow a caught exception.
+    void_checks: true # DO NOT assign to void.
+    depend_on_referenced_packages: true # DO Depend on referenced packages.
