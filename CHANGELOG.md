@@ -1,3 +1,9 @@
+### 0.14.0
+- Updated background location management to use foreground location service
+- Added additional options to notification for android
+- Updated flutter requirements to sdk 3.2 min
+- Split off from original Almoullim/background_location library
+
 ### 0.13.0
 
 - Android upgrade and location running indicator [#196](https://github.com/Almoullim/background_location/pull/196)

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:background_location/background_location.dart';
+import 'package:background_location_2/background_location.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 

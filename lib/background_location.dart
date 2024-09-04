@@ -5,7 +5,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
-import 'package:background_location/background_callback.dart';
+import 'package:background_location_2/background_callback.dart';
 
 typedef LocationCallback = void Function(List<Location> value);
 typedef OptLocationCallback = void Function(Location? value);

@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:background_location/background_location.dart';
+import 'package:background_location_2/background_location.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -89,12 +89,12 @@ class _MyAppState extends State<MyApp> {
                       ''');
                     });
                   },
-                  child: Text('Start Location Service')),
+                  child: const Text('Start Location Service')),
               ElevatedButton(
                   onPressed: () {
                     BackgroundLocation.stopLocationService();
                   },
-                  child: Text('Stop Location Service')),
+                  child: const Text('Stop Location Service')),
               ElevatedButton(
                   onPressed: () {
                     BackgroundLocation.isServiceRunning().then((value) {
@@ -104,12 +104,12 @@ class _MyAppState extends State<MyApp> {
                       log("Is Running: $value");
                     });
                   },
-                  child: Text('Check service')),
+                  child: const Text('Check service')),
               ElevatedButton(
                   onPressed: () {
                     getCurrentLocation();
                   },
-                  child: Text('Get Current Location')),
+                  child: const Text('Get Current Location')),
             ],
           ),
         ),
@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
   Widget locationData(String data) {
     return Text(
       data,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),

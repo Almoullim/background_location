@@ -1,5 +1,7 @@
 # Background Location
 
+## Forked from [Almoullim](https://github.com/Almoullim/background_location) and published separately due to slow maintenance and support
+
 A Flutter plugin to get location updates in the background for both Android and iOS (Requires iOS 10.0+). Uses `CoreLocation` for iOS and `FusedLocationProvider` for Android
 
 ## Getting Started
@@ -8,7 +10,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 ```yaml
 dependencies:
-  background_location: ^0.13.0
+  background_location: ^0.14.0
 ```
 
 **2:** Install packages from the command line:
@@ -24,7 +26,7 @@ Alternatively, your editor might support flutter packages get. Check the docs fo
 Import the package where you wanna use it.
 
 ```dart
-import 'package:background_location/background_location.dart';
+import 'package:background_location_2/background_location.dart';
 ```
 
 Request permissions from the user. You can use [permission_handler](https://pub.dev/packages/permission_handler) for this
