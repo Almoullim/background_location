@@ -2,7 +2,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'background_location'
+  s.name             = 'background_location_2'
   s.version          = '0.0.1'
   s.summary          = 'Flutter background location plugin for Android and iOS'
   s.description      = <<-DESC
@@ -16,6 +16,6 @@ Flutter background location plugin for Android and iOS
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.swift_version = '4.2'
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 end
 

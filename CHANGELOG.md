@@ -1,3 +1,6 @@
+### 0.15.0
+- Fixed ios builds to match new plugin name
+
 ### 0.14.0
 - Updated background location management to use foreground location service
 - Added additional options to notification for android

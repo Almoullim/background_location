@@ -1,20 +1,20 @@
 PODS:
-  - background_location (0.0.1):
+  - background_location_2 (0.0.1):
     - Flutter
   - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - background_location (from `.symlinks/plugins/background_location/ios`)
+  - background_location_2 (from `.symlinks/plugins/background_location_2/ios`)
   - Flutter (from `Flutter`)
 
 EXTERNAL SOURCES:
-  background_location:
-    :path: ".symlinks/plugins/background_location/ios"
+  background_location_2:
+    :path: ".symlinks/plugins/background_location_2/ios"
   Flutter:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  background_location: 1b80c1fe3abd9912bca298618f6e365abf6f588f
+  background_location_2: 2c49acf3b57e9a907a5c7f7ceb41e64895a6d8bc
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
 
 PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
