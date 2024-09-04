@@ -200,7 +200,7 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
             "start_location_service" -> {
                 if (!checkPermissions()) {
                     requestPermissions()
-                    return
+                    throw Exception("Permissions missing from location")
                 }
 
                 var locationCallback: Long? = 0L
@@ -289,18 +289,18 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
     private fun checkPermissions(): Boolean {
         Log.i(BackgroundLocationPlugin.TAG, "Check permission")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Log.i(BackgroundLocationPlugin.TAG, "Check permission > Tiramisu")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.i(BackgroundLocationPlugin.TAG, "Check permission > Q")
             var allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
                 context!!, Manifest.permission.ACCESS_FINE_LOCATION
             ) && PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                context!!, Manifest.permission.FOREGROUND_SERVICE_LOCATION
+                context!!, Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
 
             if (allowed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 Log.i(BackgroundLocationPlugin.TAG, "Check permission > Upside down cake")
                 allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                    context!!, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    context!!, Manifest.permission.FOREGROUND_SERVICE_LOCATION
                 )
             }
 
