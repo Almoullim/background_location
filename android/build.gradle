@@ -27,6 +27,7 @@ apply plugin: 'kotlin-android'
 android {
     namespace 'com.almoullim.background_location'
     compileSdkVersion 34
+    namespace = 'com.almoullim.background_location'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -44,7 +45,7 @@ android {
         minSdkVersion 18
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    
+
     lintOptions {
         disable 'InvalidPackage'
     }
