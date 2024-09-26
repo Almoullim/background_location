@@ -16,7 +16,7 @@ class _MyAppState extends State<MyApp> {
   String bearing = 'waiting...';
   String speed = 'waiting...';
   String time = 'waiting...';
-  bool? serviceRunning = null;
+  bool? serviceRunning;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                       setState(() {
                         serviceRunning = value;
                       });
-                      print("Is Running: $value");
+                      print('Is Running: $value');
                     });
                   },
                   child: Text('Check service')),
