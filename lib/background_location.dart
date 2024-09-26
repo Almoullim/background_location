@@ -50,7 +50,7 @@ class BackgroundLocation {
     var completer = Completer<Location>();
 
     getLocationUpdates((location) {
-      var _location = Location(
+      var loc = Location(
         latitude: location.latitude,
         longitude: location.longitude,
         accuracy: location.accuracy,
@@ -60,7 +60,7 @@ class BackgroundLocation {
         time: location.time,
         isMock: location.isMock,
       );
-      completer.complete(_location);
+      completer.complete(loc);
     });
 
     return completer.future;

@@ -17,8 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  #test: ^1.16.8
-  pedantic: ^1.11.1
+  lints: ^5.0.0
 
 flutter:
   plugin:
