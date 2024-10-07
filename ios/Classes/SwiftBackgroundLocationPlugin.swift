@@ -16,12 +16,16 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
         instance.running = false
     }
 
-    private func initLocationManager() {
+    private func initLocationManager(_ backgroundUpdates: Bool) {
         if (SwiftBackgroundLocationPlugin.locationManager == nil) {
             SwiftBackgroundLocationPlugin.locationManager = CLLocationManager()
             SwiftBackgroundLocationPlugin.locationManager?.delegate = self
             SwiftBackgroundLocationPlugin.locationManager?.requestAlwaysAuthorization()
-            SwiftBackgroundLocationPlugin.locationManager?.startMonitoringSignificantLocationChanges()
+            if (backgroundUpdates) {
+                // This enabled background events when the app has been dismissed. It should only be started when "on boot" is enabled
+                // https://developer.apple.com/documentation/corelocation/cllocationmanager/startmonitoringsignificantlocationchanges()
+                SwiftBackgroundLocationPlugin.locationManager?.startMonitoringSignificantLocationChanges()
+            }
 
             SwiftBackgroundLocationPlugin.locationManager?.allowsBackgroundLocationUpdates = true
             if #available(iOS 11.0, *) {
@@ -35,10 +39,11 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
         SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: "method")
 
         if (call.method == "start_location_service") {
-            initLocationManager()
-            SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: "start_location_service")
-            
             let args = call.arguments as? Dictionary<String, Any>
+            let backgroundUpdates = args?["startOnBoot"] as? Bool
+            initLocationManager(backgroundUpdates ?? false)
+            SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: "start_location_service")
+
             let distanceFilter = args?["distance_filter"] as? Double
             let priority = args?["priority"] as? Int
 
@@ -67,9 +72,10 @@ public class SwiftBackgroundLocationPlugin: NSObject, FlutterPlugin, CLLocationM
         } else if (call.method == "is_service_running") {
             result(running)
         } else if (call.method == "stop_location_service") {
-            initLocationManager()
+            initLocationManager(false)
             running = false
             SwiftBackgroundLocationPlugin.channel?.invokeMethod("location", arguments: "stop_location_service")
+            SwiftBackgroundLocationPlugin.locationManager?.stopMonitoringSignificantLocationChanges()
             SwiftBackgroundLocationPlugin.locationManager?.stopUpdatingLocation()
             result(true)
         }

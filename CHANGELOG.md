@@ -1,5 +1,5 @@
 ### 0.16.0
-- 
+- Updated ios start and stop service to handle background significant location change better
 
 ### 0.15.0
 - Fixed ios builds to match new plugin name
