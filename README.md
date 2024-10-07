@@ -63,7 +63,7 @@ import 'package:background_location/background_location.dart';
 
 Request permissions from the user. You can use [permission_handler](https://pub.dev/packages/permission_handler) for this.
 
-Set the notification title, message and icon **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after because it's an asynchronous method
+Set the notification title, message and icon **(Android only)**. Use `await` or `.then` if you wanna start the location service immediately after because it's an asynchronous method
 
 ```dart
 BackgroundLocation.setAndroidNotification(
@@ -73,7 +73,7 @@ BackgroundLocation.setAndroidNotification(
 );
 ```
 
-Set the interval between localizations in milliseconds **(Android only)**. Use `await` or `.then` if you wanna start the location service immediatly after because it's an asynchronous method
+Set the interval between localizations in milliseconds **(Android only)**. Use `await` or `.then` if you wanna start the location service immediately after because it's an asynchronous method
 
 ```dart
 BackgroundLocation.setAndroidConfiguration(1000);
