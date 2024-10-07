@@ -10,7 +10,7 @@ A Flutter plugin to get location updates in the background for both Android and 
 
 ```yaml
 dependencies:
-  background_location_2: ^0.14.0
+  background_location_2: ^0.16.0
 ```
 
 **2:** Install packages from the command line:

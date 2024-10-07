@@ -1,3 +1,6 @@
+### 0.16.0
+- 
+
 ### 0.15.0
 - Fixed ios builds to match new plugin name
 
