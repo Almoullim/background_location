@@ -103,7 +103,7 @@ You can also force the use of Android `LocationManager` instead of Google's `Fus
 BackgroundLocation.startLocationService(forceAndroidLocationManager: true);
 ```
 
-`getLocationUpdates` will trigger everytime the location updates on the device. Provide a callback function to `getLocationUpdates` to handle location update.
+`getLocationUpdates` will triggered whenever the location is updated on the device. Provide a callback function to `getLocationUpdates` to handle location updates.
 
 ```dart
 BackgroundLocation.getLocationUpdates((location) {
