@@ -41,7 +41,7 @@ in `ios/Runner/Info.plist` add:
 </array>
 ```
 
-> *Note*: You need describe you purpose for using the permission in to  `string` value. If not, attempts to access the resource fail, and might even cause your app to crash. And when publishing to the App Store, this can cause your app to be rejected by Apple. Refer to [Provide a purpose string (Apple Docummentation)](https://developer.apple.com/documentation/uikit/protecting_the_user_s_privacy/requesting_access_to_protected_resources#3037322).
+> *Note*: You need to describe your purpose for using the permission in to `string` value. If not, attempts to access the resource fail, and might even cause your app to crash. And when publishing to the App Store, this can cause your app to be rejected by Apple. Refer to [Provide a purpose string (Apple Docummentation)](https://developer.apple.com/documentation/uikit/protecting_the_user_s_privacy/requesting_access_to_protected_resources#3037322).
 
 ### Android Platform Permission
 
