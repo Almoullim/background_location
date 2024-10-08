@@ -41,6 +41,8 @@ in `ios/Runner/Info.plist` add:
 </array>
 ```
 
+> *Note*: You can change the `string` value to be a description of your purpose for using the permission.
+
 ### Android Platform Permission
 
 In `android/app/src/main/AndroidManifest.xml` add:
