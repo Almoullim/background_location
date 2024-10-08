@@ -14,7 +14,7 @@ dependencies:
 **2:** Install packages from the command line:
 
 ```bash
-flutter packages get
+flutter pub get
 ```
 
 Alternatively, your editor might support flutter packages get. Check the docs for your editor to learn more.
