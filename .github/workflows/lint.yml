@@ -2,7 +2,7 @@ name: Lint + Test
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, main ]
     types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
