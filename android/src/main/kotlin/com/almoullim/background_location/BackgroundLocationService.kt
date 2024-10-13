@@ -200,7 +200,7 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
             "start_location_service" -> {
                 if (!checkPermissions()) {
                     requestPermissions()
-                    result.error("permissionError", "Permissions missing for location service to start fully")
+                    result.error("permissionError", "Permissions missing for location service to start fully", null)
                     return
                 }
 

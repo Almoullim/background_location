@@ -1,4 +1,4 @@
-### 0.16.0
+### 0.16.1
 - Updated ios start and stop service to handle background significant location change better
 
 ### 0.15.0
