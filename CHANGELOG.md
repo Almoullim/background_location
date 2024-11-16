@@ -1,3 +1,6 @@
+### 0.16.2
+- Updated android start on boot_complete trigger to ensure flutter engine is started
+
 ### 0.16.1
 - Updated ios start and stop service to handle background significant location change better
 
