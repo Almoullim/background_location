@@ -17,9 +17,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.common.*
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest
-import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
+import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
@@ -265,8 +265,14 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     }
 
     fun triggerForegroundServiceStart(intent: Intent) {
+        val flutterLoader = FlutterLoader()
         try {
-            FlutterInjector.instance().flutterLoader().ensureInitializationComplete(this, null)
+            if(!flutterLoader.initialized()) {
+                flutterLoader.let {
+                    it.startInitialization(applicationContext)
+                }
+            }
+            flutterLoader.ensureInitializationComplete(this, null)
         } catch (tr: Throwable) {
             Log.w(TAG, "Error starting service on boot", tr)
             return
@@ -295,7 +301,7 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
             val args = DartExecutor.DartCallback(
                 this.assets,
-                FlutterInjector.instance().flutterLoader().findAppBundlePath(),
+                flutterLoader.findAppBundlePath(),
                 callbackInfo
             )
             backgroundEngine?.dartExecutor?.executeDartCallback(args)
@@ -446,10 +452,10 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
         try {
             if (isGoogleApiAvailable && !this.forceLocationManager) {
                 mFusedLocationClient!!.lastLocation.addOnCompleteListener { task ->
-                        if (task.isSuccessful && task.result != null) {
-                            onNewLocation(task.result)
-                        }
+                    if (task.isSuccessful && task.result != null) {
+                        onNewLocation(task.result)
                     }
+                }
             } else {
                 mLocation = mLocationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             }
@@ -496,8 +502,8 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
         Looper.getMainLooper()?.let {
             Handler(it).post {
-                    backgroundChannel?.invokeMethod("BCM_LOCATION", result)
-                }
+                backgroundChannel?.invokeMethod("BCM_LOCATION", result)
+            }
         }
     }
 
@@ -531,8 +537,8 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
 
         Looper.getMainLooper()?.let {
             Handler(it).post {
-                    backgroundChannel?.invokeMethod("BCM_NOTIFICATION_ACTION", result)
-                }
+                backgroundChannel?.invokeMethod("BCM_NOTIFICATION_ACTION", result)
+            }
         }
     }
 
