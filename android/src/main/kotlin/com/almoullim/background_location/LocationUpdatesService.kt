@@ -265,7 +265,12 @@ class LocationUpdatesService : Service(), MethodChannel.MethodCallHandler {
     }
 
     fun triggerForegroundServiceStart(intent: Intent) {
-        FlutterInjector.instance().flutterLoader().ensureInitializationComplete(this, null)
+        try {
+            FlutterInjector.instance().flutterLoader().ensureInitializationComplete(this, null)
+        } catch (tr: Throwable) {
+            Log.w(TAG, "Error starting service on boot", tr)
+            return
+        }
         UPDATE_INTERVAL_IN_MILLISECONDS =
             intent?.getLongExtra("interval", UPDATE_INTERVAL_IN_MILLISECONDS)
                 ?: UPDATE_INTERVAL_IN_MILLISECONDS
