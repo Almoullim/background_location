@@ -10,17 +10,6 @@ import io.flutter.plugin.common.PluginRegistry
 class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
-
-        /**
-        Legacy for v1 embedding
-         */
-        @SuppressWarnings("deprecation")
-        fun registerWith(registrar: PluginRegistry.Registrar) {
-            val service = BackgroundLocationService.getInstance()
-            service.onAttachedToEngine(registrar.context(), registrar.messenger())
-            registrar.addRequestPermissionsResultListener(service)
-        }
-
         const val TAG = "com.almoullim.Log.Tag"
         const val PLUGIN_ID = "com.almoullim.background_location"
     }
