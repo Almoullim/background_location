@@ -20,10 +20,13 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 
+import com.almoullim.background_location.PLUGIN_ID
+import com.almoullim.background_location.TAG
+
 class BackgroundLocationService : MethodChannel.MethodCallHandler,
     PluginRegistry.RequestPermissionsResultListener {
     companion object {
-        val METHOD_CHANNEL_NAME = "${BackgroundLocationPlugin.PLUGIN_ID}/methods"
+        val METHOD_CHANNEL_NAME = "${PLUGIN_ID}/methods"
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
         private var instance: BackgroundLocationService? = null
@@ -288,10 +291,10 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
      * Checks the current permission for `ACCESS_FINE_LOCATION`
      */
     private fun checkPermissions(): Boolean {
-        Log.i(BackgroundLocationPlugin.TAG, "Check permission")
+        Log.i(TAG, "Check permission")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Log.i(BackgroundLocationPlugin.TAG, "Check permission > Q")
+            Log.i(TAG, "Check permission > Q")
             var allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
                 context!!, Manifest.permission.ACCESS_FINE_LOCATION
             ) && PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
@@ -299,7 +302,7 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
             )
 
             if (allowed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                Log.i(BackgroundLocationPlugin.TAG, "Check permission > Upside down cake")
+                Log.i(TAG, "Check permission > Upside down cake")
                 allowed = PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
                     context!!, Manifest.permission.FOREGROUND_SERVICE_LOCATION
                 )
@@ -329,13 +332,13 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
         )
         if (shouldProvideRationale) {
             Log.i(
-                BackgroundLocationPlugin.TAG,
+                TAG,
                 "Displaying permission rationale to provide additional context."
             )
             Toast.makeText(context, R.string.permission_rationale, Toast.LENGTH_LONG).show()
 
         } else {
-            Log.i(BackgroundLocationPlugin.TAG, "Requesting permission")
+            Log.i(TAG, "Requesting permission")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 ActivityCompat.requestPermissions(
                     activity!!,
@@ -423,11 +426,11 @@ class BackgroundLocationService : MethodChannel.MethodCallHandler,
         permissions: Array<out String>,
         grantResults: IntArray
     ): Boolean {
-        Log.i(BackgroundLocationPlugin.TAG, "onRequestPermissionResult")
+        Log.i(TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             when {
                 grantResults.isEmpty() -> Log.i(
-                    BackgroundLocationPlugin.TAG,
+                    TAG,
                     "User interaction was cancelled."
                 )
 

@@ -1,17 +1,18 @@
 package com.almoullim.background_location
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.plugin.common.PluginRegistry
 
 class BackgroundLocationPlugin : FlutterPlugin, ActivityAware {
-    override fun onAttachedToEngine(binding: FlutterPluginBinding) {
+    // Remove companion object with v1 embedding code
+    // (Delete the entire "companion object" block below)
+
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         BackgroundLocationService.getInstance().onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         BackgroundLocationService.getInstance().onDetachedFromEngine()
     }
 
