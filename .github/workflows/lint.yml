@@ -32,6 +32,11 @@ jobs:
       - name: Linter
         run: flutter analyze
 
+      - name: Build example apk
+        run: |
+          cd example
+          flutter build apk
+
       - name: Test example package
         run: | 
           cd example
