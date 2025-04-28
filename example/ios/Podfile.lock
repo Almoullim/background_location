@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  background_location_2: 2c49acf3b57e9a907a5c7f7ceb41e64895a6d8bc
+  background_location_2: 738e207c87ea5ee183a4e234d5766be4cdb019a7
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
 
 PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2
