@@ -1,3 +1,9 @@
+### 0.13.2
+
+- Fixed issues with android namespaces
+- resolve flutter analyze lint errors and update flutter lint
+- Clarify permissions requirements earlier in the documentation [#226](https://github.com/Almoullim/background_location/pull/#226)
+
 ### 0.13.1
 
 - Fix License Typo [#201](https://github.com/Almoullim/background_location/pull/#201)
