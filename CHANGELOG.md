@@ -1,3 +1,8 @@
+### 0.13.1
+
+- Fix License Typo [#201](https://github.com/Almoullim/background_location/pull/#201)
+- Fix API issues stemming from Android 13/14 changes to location services [#210](https://github.com/Almoullim/background_location/pull/#210)
+
 ### 0.13.0
 
 - Android upgrade and location running indicator [#196](https://github.com/Almoullim/background_location/pull/196)
